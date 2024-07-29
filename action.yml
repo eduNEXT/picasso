@@ -1,0 +1,145 @@
+name: Picasso V2
+description: 'Picasso is a tool for building Open edX images. These images are used to launch Open edX environments for both production and development.'
+inputs:
+  STRAIN_REPOSITORY:
+    description: '...'
+    required: true
+  STRAIN_REPOSITORY_BRANCH:
+    description: '...'
+    required: true
+  STRAIN_PATH:
+    description: '...'
+    required: true
+  SERVICE:
+    description: '...'
+    required: true
+  DOCKERHUB_USERNAME:
+    description: '...'
+    required: true
+  DOCKERHUB_PASSWORD:
+    description: '...'
+    required: true
+  REPO_DEPLOYMENT_KEY:
+    description: '...'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+  - name: Login in DockerHub
+    uses: docker/login-action@v3
+    with:
+      username: ${{ inputs.DOCKERHUB_USERNAME }}
+      password: ${{ inputs.DOCKERHUB_PASSWORD }}
+
+  - name: Checkout strains repository
+    uses: actions/checkout@v2
+    with:
+      repository: ${{ inputs.STRAIN_REPOSITORY }}
+      ref: ${{ inputs.STRAIN_REPOSITORY_BRANCH }}
+      token: ${{ inputs.REPO_DEPLOYMENT_KEY }}
+
+  - name: Get Global Variables
+    shell: bash
+    working-directory: ${{ inputs.STRAIN_PATH }}
+    run: |
+      if [ ! -e "./config.yml" ]; then
+        echo "ERROR: file config.yml doesn't exist"
+        exit 1 # terminate and indicate error
+      fi
+
+      # Initialize variables
+      strain_name=""
+      strain_tutor_version=""
+
+      # Read config.yml line by line
+      while IFS= read -r line || [[ -n $line ]]; do
+        if [[ "$line" == *":"* ]]; then
+          name=$(echo "$line" | cut -d ":" -f1)
+          value=$(echo "$line" | cut -d ":" -f2- | awk '{$1=$1};1' | tr -d '\r')
+
+          case $name in
+            *"TUTOR_APP_NAME"*)
+              strain_name=$value
+              ;;
+            *"TUTOR_VERSION"*)
+              strain_tutor_version=$value
+              ;;
+          esac
+        fi
+      done < "config.yml"
+
+      # Check if variables are set
+      if [ -z "$strain_name" ]; then
+        echo "ERROR: TUTOR_APP_NAME not found in the given config.yml" >&2
+        exit 1
+      fi
+
+      if [ -z "$strain_tutor_version" ]; then
+        echo "ERROR: TUTOR_VERSION not found in the given config.yml" >&2
+        exit 1
+      fi
+
+      echo "TUTOR_APP_NAME=${strain_name}" >> $GITHUB_ENV
+      echo "TUTOR_VERSION=${strain_tutor_version}" >> $GITHUB_ENV
+
+  - name: Install TVM
+    shell: bash
+    working-directory: ${{ inputs.STRAIN_PATH }}
+    env:
+      TUTOR_VERSION: ${{ env.TUTOR_VERSION }}
+      TUTOR_APP_NAME: ${{ env.TUTOR_APP_NAME }}
+    run: |
+      tvm install $TUTOR_VERSION
+      tvm project init $TUTOR_APP_NAME $TUTOR_VERSION
+
+      # This command copies all the files and folders
+      # from the repository STRAIN_PATH to the recently above created TVM PROJECT folder
+      cp -r $(ls --ignore=$TUTOR_APP_NAME) $TUTOR_APP_NAME/
+
+  - name: Configure TVM Project
+    shell: bash
+    working-directory: ${{ github.workspace }}/strains/${{ env.STRAIN_PATH }}/$TUTOR_APP_NAME
+    run: |
+      . .tvm/bin/activate
+      tutor config save
+
+  - name: Execute extra commands
+    shell: bash
+    working-directory: ${{ inputs.STRAIN_PATH }}
+    run: |
+      . .tvm/bin/activate
+      tutor plugins update
+
+      major_version=$(pip show tutor | grep Version | awk '{print $2}' | cut -d'.' -f1)
+      distro_version=$(
+          git ls-remote --tags https://github.com/eduNEXT/tutor-contrib-edunext-distro \\
+          | grep -E "$major_version\\.[0-9]+\\.[0-9]+$" \\
+          | tail -n 1 \\
+          | awk -F'/' '{print $NF}' \\
+      )
+
+      pip install git+https://github.com/eduNEXT/tutor-contrib-edunext-distro@$distro_version
+
+      tutor plugins list
+      tutor plugins enable distro
+
+      syntax_validation=$(tutor distro syntax-validator)
+
+      # Fails if the returned value doesn't contain the word 'Success'
+      if [ -n "$syntax_validation" ] && ! echo "$syntax_validation" | grep -q "Success"; then
+          echo "SYNTAX ERROR was found in the given config.yml: '$syntax_validation'" >&2
+          exit 1
+      fi
+
+      tutor distro run-extra-commands
+      tutor config save
+
+  - name: Build service
+    shell: bash
+    working-directory: ${{ inputs.STRAIN_PATH }}
+    env:
+      SERVICE: ${{ inputs.SERVICE }}
+    run: |
+      . .tvm/bin/activate
+      tutor images build $SERVICE --no-cache
