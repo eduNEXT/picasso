@@ -19,9 +19,9 @@ inputs:
   DOCKERHUB_PASSWORD:
     description: '...'
     required: true
-  REPO_DEPLOYMENT_KEY:
-    description: '...'
-    required: true
+  # REPO_DEPLOYMENT_KEY:
+  #   description: '...'
+  #   required: true
 
 runs:
   using: 'composite'
@@ -33,11 +33,11 @@ runs:
       password: ${{ inputs.DOCKERHUB_PASSWORD }}
 
   - name: Checkout strains repository
-    uses: actions/checkout@v2
+    uses: actions/checkout@v4
     with:
       repository: ${{ inputs.STRAIN_REPOSITORY }}
       ref: ${{ inputs.STRAIN_REPOSITORY_BRANCH }}
-      token: ${{ inputs.REPO_DEPLOYMENT_KEY }}
+      # token: ${{ inputs.REPO_DEPLOYMENT_KEY }}
 
   - name: Get Global Variables
     shell: bash
