@@ -41,7 +41,7 @@ runs:
 
   - name: Get Global Variables
     shell: bash
-    working-directory: ${{ inputs.STRAIN_PATH }}
+    working-directory: ./${{ inputs.STRAIN_PATH }}
     run: |
       if [ ! -e "./config.yml" ]; then
         echo "ERROR: file config.yml doesn't exist"
@@ -85,7 +85,7 @@ runs:
 
   - name: Install TVM
     shell: bash
-    working-directory: ${{ inputs.STRAIN_PATH }}
+    working-directory: ./${{ inputs.STRAIN_PATH }}
     env:
       TUTOR_VERSION: ${{ env.TUTOR_VERSION }}
       TUTOR_APP_NAME: ${{ env.TUTOR_APP_NAME }}
@@ -100,7 +100,8 @@ runs:
 
   - name: Configure TVM Project
     shell: bash
-    working-directory: ${{ github.workspace }}/strains/${{ env.STRAIN_PATH }}/$TUTOR_APP_NAME
+
+    working-directory: ./${{ inputs.STRAIN_PATH }}
     run: |
       . .tvm/bin/activate
       tutor config save
@@ -138,7 +139,7 @@ runs:
 
   - name: Build service
     shell: bash
-    working-directory: ${{ inputs.STRAIN_PATH }}
+    working-directory: ./${{ inputs.STRAIN_PATH }}
     env:
       SERVICE: ${{ inputs.SERVICE }}
     run: |
