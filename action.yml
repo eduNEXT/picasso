@@ -90,6 +90,7 @@ runs:
       TUTOR_VERSION: ${{ env.TUTOR_VERSION }}
       TUTOR_APP_NAME: ${{ env.TUTOR_APP_NAME }}
     run: |
+      pip install git+https://github.com/eduNEXT/tvm.git
       tvm install $TUTOR_VERSION
       tvm project init $TUTOR_APP_NAME $TUTOR_VERSION
 
