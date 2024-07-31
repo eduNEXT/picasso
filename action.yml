@@ -113,42 +113,42 @@ runs:
       . .tvm/bin/activate
       tutor config save
 
-  # - name: Execute extra commands
-  #   shell: bash
-  #   working-directory: ./${{ inputs.STRAIN_PATH }}
-  #   run: |
-  #     . .tvm/bin/activate
-  #     tutor plugins update
+  - name: Execute extra commands
+    shell: bash
+    working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+    run: |
+      . .tvm/bin/activate
+      tutor plugins update
 
-  #     major_version=$(pip show tutor | grep Version | awk '{print $2}' | cut -d'.' -f1)
-  #     distro_version=$(
-  #         git ls-remote --tags https://github.com/eduNEXT/tutor-contrib-edunext-distro \\
-  #         | grep -E "$major_version\\.[0-9]+\\.[0-9]+$" \\
-  #         | tail -n 1 \\
-  #         | awk -F'/' '{print $NF}' \\
-  #     )
+      major_version=$(pip show tutor | grep Version | awk '{print $2}' | cut -d'.' -f1)
+      distro_version=$(
+          git ls-remote --tags https://github.com/eduNEXT/tutor-contrib-edunext-distro \\
+          | grep -E "$major_version\\.[0-9]+\\.[0-9]+$" \\
+          | tail -n 1 \\
+          | awk -F'/' '{print $NF}' \\
+      )
 
-  #     pip install git+https://github.com/eduNEXT/tutor-contrib-edunext-distro@$distro_version
+      pip install git+https://github.com/eduNEXT/tutor-contrib-edunext-distro@$distro_version
 
-  #     tutor plugins list
-  #     tutor plugins enable distro
+      tutor plugins list
+      tutor plugins enable distro
 
-  #     syntax_validation=$(tutor distro syntax-validator)
+      syntax_validation=$(tutor distro syntax-validator)
 
-  #     # Fails if the returned value doesn't contain the word 'Success'
-  #     if [ -n "$syntax_validation" ] && ! echo "$syntax_validation" | grep -q "Success"; then
-  #         echo "SYNTAX ERROR was found in the given config.yml: '$syntax_validation'" >&2
-  #         exit 1
-  #     fi
+      # Fails if the returned value doesn't contain the word 'Success'
+      if [ -n "$syntax_validation" ] && ! echo "$syntax_validation" | grep -q "Success"; then
+          echo "SYNTAX ERROR was found in the given config.yml: '$syntax_validation'" >&2
+          exit 1
+      fi
 
-  #     tutor distro run-extra-commands
-  #     tutor config save
+      tutor distro run-extra-commands
+      tutor config save
 
-  # - name: Build service
-  #   shell: bash
-  #   working-directory: ./${{ inputs.STRAIN_PATH }}
-  #   env:
-  #     SERVICE: ${{ inputs.SERVICE }}
-  #   run: |
-  #     . .tvm/bin/activate
-  #     tutor images build $SERVICE --no-cache
+  - name: Build service
+    shell: bash
+    working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+    env:
+      SERVICE: ${{ inputs.SERVICE }}
+    run: |
+      . .tvm/bin/activate
+      tutor images build $SERVICE --no-cache
