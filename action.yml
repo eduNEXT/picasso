@@ -41,8 +41,9 @@ runs:
 
   - name: Get Global Variables
     shell: bash
-    working-directory: ./${{ inputs.STRAIN_PATH }}
+    working-directory: ${{ inputs.STRAIN_PATH }}
     run: |
+      pwd
       if [ ! -e "./config.yml" ]; then
         echo "ERROR: file config.yml doesn't exist"
         exit 1 # terminate and indicate error
@@ -86,19 +87,19 @@ runs:
   - name: Install dependencies and activate virtualenv
     shell: bash
     run: |
+      pwd
       python -m venv venv
       python -m pip install --upgrade pip
       . venv/bin/activate
       pip install git+https://github.com/eduNEXT/tvm.git
+      echo $PATH
       echo PATH=$PATH >> $GITHUB_ENV
 
   - name: Install TVM
     shell: bash
-    working-directory: ./${{ inputs.STRAIN_PATH }}
-    env:
-      TUTOR_VERSION: ${{ env.TUTOR_VERSION }}
-      TUTOR_APP_NAME: ${{ env.TUTOR_APP_NAME }}
+    working-directory: ${{ inputs.STRAIN_PATH }}
     run: |
+      pwd
       tvm install $TUTOR_VERSION
       tvm project init $TUTOR_APP_NAME $TUTOR_VERSION
 
@@ -106,12 +107,14 @@ runs:
       # from the repository STRAIN_PATH to the recently above created TVM PROJECT folder
       cp -r $(ls --ignore=$TUTOR_APP_NAME) $TUTOR_APP_NAME/
 
-  - name: Configure TVM Project
-    shell: bash
-    working-directory: ./${{ inputs.STRAIN_PATH }}
-    run: |
-      . .tvm/bin/activate
-      tutor config save
+      ls $TUTOR_APP_NAME/
+
+  # - name: Configure TVM Project
+  #   shell: bash
+  #   working-directory: ${{ inputs.STRAIN_PATH }}
+  #   run: |
+  #     . .tvm/bin/activate
+  #     tutor config save
 
   # - name: Execute extra commands
   #   shell: bash
