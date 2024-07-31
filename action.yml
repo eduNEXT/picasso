@@ -101,15 +101,14 @@ runs:
     run: |
       tvm install $TUTOR_VERSION
       tvm project init $TUTOR_APP_NAME $TUTOR_VERSION
-      ls -a
+
       # This command copies all the files and folders
       # from the repository STRAIN_PATH to the recently above created TVM PROJECT folder
       cp -r $(ls --ignore=$TUTOR_APP_NAME) $TUTOR_APP_NAME/
-      echo TUTOR_ROOT=$TUTOR_ROOT >> $GITHUB_ENV
-      echo TUTOR_PLUGINS_ROOT=$TUTOR_PLUGINS_ROOT >> $GITHUB_ENV
 
   - name: Configure TVM Project
     shell: bash
+    working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
     run: |
       . .tvm/bin/activate
       tutor config save
