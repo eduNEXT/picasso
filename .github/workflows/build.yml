@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       STRAIN_REPOSITORY:
-        description: 'The repository URL for strains'
+        description: 'The repository for strains to checkout. It should follow the format: ORGANIZATION/REPO'
         required: true
         type: string
       STRAIN_REPOSITORY_BRANCH:
