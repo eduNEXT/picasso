@@ -122,7 +122,6 @@ jobs:
         working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         run: |
           . .tvm/bin/activate
-          tutor plugins update
 
           major_version=$(pip show tutor | grep Version | awk '{print $2}' | cut -d'.' -f1)
           distro_version=$(
@@ -133,8 +132,6 @@ jobs:
           )
 
           pip install git+https://github.com/eduNEXT/tutor-contrib-edunext-distro@$distro_version
-
-          tutor plugins list
           tutor plugins enable distro
 
       - name: Execute extra commands
