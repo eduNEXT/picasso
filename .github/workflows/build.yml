@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       STRAIN_REPOSITORY:
-        description: 'The repository for strains to checkout. It should follow the format: ORGANIZATION/REPO'
+        description: 'The repository URL for strains'
         required: true
         type: string
       STRAIN_REPOSITORY_BRANCH:
@@ -113,12 +113,11 @@ jobs:
           # from the repository STRAIN_PATH to the recently above created TVM PROJECT folder
           cp -r $(ls --ignore=$TUTOR_APP_NAME) $TUTOR_APP_NAME/
 
-          echo "TVM_PROJECT_ENV=${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}" >> $GITHUB_ENV
-
       - name: Enable distro plugin
         shell: bash
         working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         run: |
+          . .tvm/bin/activate
           tutor plugins update
 
           major_version=$(pip show tutor | grep Version | awk '{print $2}' | cut -d'.' -f1)
@@ -138,6 +137,7 @@ jobs:
         shell: bash
         working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         run: |
+          . .tvm/bin/activate
           tutor distro run-extra-commands
 
       - name: Prepare docker if building MFE
@@ -154,6 +154,7 @@ jobs:
         env:
           SERVICE: ${{ inputs.SERVICE }}
         run: |
+          . .tvm/bin/activate
           tutor config save
           tutor images build $SERVICE --no-cache
 
