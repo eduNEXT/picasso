@@ -140,6 +140,14 @@ jobs:
           . .tvm/bin/activate
           tutor distro run-extra-commands
 
+      - name: Prepare docker if building MFE
+        if: ${{ inputs.SERVICE == 'mfe' }}
+        shell: bash
+        run: |
+          echo "[worker.oci]" > buildkit.toml
+          echo "max-parallelism = 2" >> buildkit.toml
+          docker buildx create --use --node=max2cpu --driver=docker-container --config=./buildkit.toml
+
       - name: Build service image with no cache
         shell: bash
         working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
