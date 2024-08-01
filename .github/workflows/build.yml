@@ -92,13 +92,6 @@ jobs:
           echo "TUTOR_APP_NAME=${strain_name}" >> $GITHUB_ENV
           echo "TUTOR_VERSION=${strain_tutor_version}" >> $GITHUB_ENV
 
-      # - name: Install main dependencies and activate virtualenv
-      #   shell: bash
-      #   run: |
-      #     python -m venv venv
-      #     . venv/bin/activate
-      #     echo PATH=$PATH >> $GITHUB_ENV
-
       - name: Install TVM
         shell: bash
         working-directory: ${{ inputs.STRAIN_PATH }}
