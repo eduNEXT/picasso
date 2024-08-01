@@ -104,7 +104,6 @@ jobs:
         working-directory: ${{ inputs.STRAIN_PATH }}
         run: |
           pip install git+https://github.com/eduNEXT/tvm.git
-          tvm --version
 
       - name: Configure TVM project
         shell: bash
