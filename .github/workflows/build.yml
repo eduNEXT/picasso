@@ -164,4 +164,5 @@ jobs:
         env:
           SERVICE: ${{ inputs.SERVICE }}
         run: |
+          . .tvm/bin/activate
           tutor images push $SERVICE
