@@ -156,3 +156,11 @@ jobs:
         run: |
           tutor config save
           tutor images build $SERVICE --no-cache
+
+      - name: Push service image to DockerHub
+        shell: bash
+        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        env:
+          SERVICE: ${{ inputs.SERVICE }}
+        run: |
+          tutor images push $SERVICE
