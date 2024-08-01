@@ -1,5 +1,4 @@
 name: Picasso V2
-description: 'Picasso is a tool for building Open edX images. These images are used to launch Open edX environments for both production and development.'
 
 on:
   workflow_call:
