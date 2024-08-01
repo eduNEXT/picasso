@@ -92,15 +92,19 @@ jobs:
           echo "TUTOR_APP_NAME=${strain_name}" >> $GITHUB_ENV
           echo "TUTOR_VERSION=${strain_tutor_version}" >> $GITHUB_ENV
 
-      - name: Install dependencies and activate virtualenv
+      # - name: Install main dependencies and activate virtualenv
+      #   shell: bash
+      #   run: |
+      #     python -m venv venv
+      #     . venv/bin/activate
+      #     echo PATH=$PATH >> $GITHUB_ENV
+
+      - name: Install TVM
         shell: bash
+        working-directory: ${{ inputs.STRAIN_PATH }}
         run: |
-          python -m venv venv
-          python -m pip install --upgrade pip
-          . venv/bin/activate
           pip install git+https://github.com/eduNEXT/tvm.git
-          echo $PATH
-          echo PATH=$PATH >> $GITHUB_ENV
+          tvm --version
 
       - name: Configure TVM project
         shell: bash
