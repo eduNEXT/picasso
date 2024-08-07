@@ -26,8 +26,8 @@ on:
       DOCKERHUB_PASSWORD:
         description: 'DockerHub password for login'
         required: true
-      REPO_DEPLOYMENT_KEY:
-        description: 'Deployment key for repository checkout'
+      SSH_PRIVATE_KEY:
+        description: 'Service user SSH key for repository checkout'
         required: true
 
 jobs:
@@ -46,7 +46,7 @@ jobs:
         with:
           repository: ${{ inputs.STRAIN_REPOSITORY }}
           ref: ${{ inputs.STRAIN_REPOSITORY_BRANCH }}
-          token: ${{ secrets.REPO_DEPLOYMENT_KEY }}
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Set TVM project name and version
         shell: bash
