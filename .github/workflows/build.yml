@@ -19,6 +19,10 @@ on:
         description: 'The service name to build'
         required: true
         type: string
+      AWS_EC2_INSTANCE_TYPE:
+        description: 'The EC2 instance type to start'
+        required: true
+        type: string
     secrets:
       DOCKERHUB_USERNAME:
         description: 'DockerHub username for login'
@@ -29,10 +33,56 @@ on:
       SSH_PRIVATE_KEY:
         description: 'Service user SSH key for repository checkout'
         required: true
+      GH_PERSONAL_ACCESS_TOKEN:
+        description: 'GitHub personal access token'
+        required: true
+      AWS_ACCESS_KEY_ID:
+        description: 'AWS access key ID'
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        description: 'AWS secret access key'
+        required: true
+      AWS_REGION:
+        description: 'AWS region'
+        required: true
+      AWS_EC2_IMAGE_ID:
+        description: 'AWS EC2 image ID'
+        required: true
+      AWS_SUBNET_ID:
+        description: 'AWS subnet ID'
+        required: true
+      AWS_SECURITY_GROUP_ID:
+        description: 'AWS security group ID'
+        required: true
 
 jobs:
-  build:
+  start-runner:
+    name: Start self-hosted EC2 runner
     runs-on: ubuntu-latest
+    outputs:
+      label: ${{ steps.start-ec2-runner.outputs.label }}
+      ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Start EC2 runner
+        id: start-ec2-runner
+        uses: machulav/ec2-github-runner@v2
+        with:
+          mode: start
+          github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          ec2-image-id: ${{ secrets.AWS_EC2_IMAGE_ID }}
+          ec2-instance-type: ${{ inputs.AWS_EC2_INSTANCE_TYPE }}
+          subnet-id: ${{ secrets.AWS_SUBNET_ID }}
+          security-group-id: ${{ secrets.AWS_SECURITY_GROUP_ID }}
+  build:
+    name: Build service image
+    needs: start-runner
+    runs-on: ${{ needs.start-runner.outputs.label }}
 
     steps:
       - name: Login to DockerHub
@@ -169,3 +219,25 @@ jobs:
         run: |
           . .tvm/bin/activate
           tutor images push $SERVICE
+
+  stop-runner:
+    name: Stop self-hosted EC2 runner
+    needs:
+      - start-runner # required to get output from the start-runner job
+      - build # required to wait when the main job is done
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Stop EC2 runner
+        uses: machulav/ec2-github-runner@v2
+        with:
+          mode: stop
+          github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          label: ${{ needs.start-runner.outputs.label }}
+          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
