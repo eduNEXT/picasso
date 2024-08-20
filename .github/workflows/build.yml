@@ -131,6 +131,11 @@ jobs:
         with:
             ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: Add GitHub to known hosts
+        shell: bash
+        run: |
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
       - name: Execute extra commands
         shell: bash
         working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
