@@ -126,6 +126,11 @@ jobs:
           pip install git+https://github.com/eduNEXT/tutor-contrib-edunext-distro@$distro_version
           tutor plugins enable distro
 
+      - name: Setup SSH agent for private repositories cloning
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
       - name: Execute extra commands
         shell: bash
         working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
