@@ -215,8 +215,8 @@ jobs:
   stop-runner:
     name: Stop self-hosted EC2 runner
     needs:
-      - start-runner # required to get output from the start-runner job
-      - build # required to wait when the main job is done
+      - start-runner
+      - build
     runs-on: ubuntu-latest
     if: ${{ always() }}
     steps:
