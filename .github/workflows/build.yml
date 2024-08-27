@@ -51,8 +51,8 @@ on:
       AWS_SECURITY_GROUP_ID:
         description: 'AWS security group ID'
         required: true
-      APOLLO_APP_SECRET:
-        description: 'Apollo app secret'
+      GH_APPLICATION_PRIVATE_KEY:
+        description: 'GitHub application private key'
         required: true
 
 jobs:
@@ -69,7 +69,7 @@ jobs:
         uses: peter-murray/workflow-application-token-action@v3
         with:
           application_id: ${{ vars.APOLLO_APP_ID }}
-          application_private_key: ${{ secrets.APOLLO_APP_SECRET }}
+          application_private_key: ${{ secrets.GH_APPLICATION_PRIVATE_KEY }}
       - name: Start EC2 runner
         id: start-ec2-runner
         uses: NextChapterSoftware/ec2-action-builder@v1.7
