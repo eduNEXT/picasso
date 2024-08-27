@@ -51,6 +51,9 @@ on:
       AWS_SECURITY_GROUP_ID:
         description: 'AWS security group ID'
         required: true
+      APOLLO_APP_SECRET:
+        description: 'Apollo app secret'
+        required: true
 
 jobs:
 
