@@ -33,9 +33,6 @@ on:
       SSH_PRIVATE_KEY:
         description: 'Service user SSH key for repository checkout'
         required: true
-      GH_PERSONAL_ACCESS_TOKEN:
-        description: 'GitHub personal access token'
-        required: true
       AWS_ACCESS_KEY_ID:
         description: 'AWS access key ID'
         required: true
@@ -64,11 +61,17 @@ jobs:
     permissions:
       actions: write
     steps:
+      - name: Get Fine Grained Personal Access Token
+        id: get_workflow_token
+        uses: peter-murray/workflow-application-token-action@v3
+        with:
+          application_id: ${{ vars.APOLLO_APP_ID }}
+          application_private_key: ${{ secrets.APOLLO_APP_SECRET }}
       - name: Start EC2 runner
         id: start-ec2-runner
         uses: NextChapterSoftware/ec2-action-builder@v1.7
         with:
-          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          github_token: ${{ steps.get_workflow_token.outputs.token }}
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ${{ secrets.AWS_REGION }}
