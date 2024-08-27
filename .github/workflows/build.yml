@@ -19,6 +19,10 @@ on:
         description: 'The service name to build'
         required: true
         type: string
+      AWS_EC2_INSTANCE_TYPE:
+        description: 'The EC2 instance type to start'
+        required: true
+        type: string
     secrets:
       DOCKERHUB_USERNAME:
         description: 'DockerHub username for login'
@@ -29,11 +33,56 @@ on:
       SSH_PRIVATE_KEY:
         description: 'Service user SSH key for repository checkout'
         required: true
+      GH_PERSONAL_ACCESS_TOKEN:
+        description: 'GitHub personal access token'
+        required: true
+      AWS_ACCESS_KEY_ID:
+        description: 'AWS access key ID'
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        description: 'AWS secret access key'
+        required: true
+      AWS_REGION:
+        description: 'AWS region'
+        required: true
+      AWS_EC2_IMAGE_ID:
+        description: 'AWS EC2 image ID'
+        required: true
+      AWS_SUBNET_ID:
+        description: 'AWS subnet ID'
+        required: true
+      AWS_SECURITY_GROUP_ID:
+        description: 'AWS security group ID'
+        required: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
 
+  start-runner:
+    timeout-minutes: 5
+    name: Start self-hosted EC2 runner
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Start EC2 runner
+        id: start-ec2-runner
+        uses: NextChapterSoftware/ec2-action-builder@v1.7
+        with:
+          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          ec2_instance_type: ${{ inputs.AWS_EC2_INSTANCE_TYPE }}
+          ec2_ami_id: ${{ secrets.AWS_EC2_IMAGE_ID }}
+          ec2_subnet_id: ${{ secrets.AWS_SUBNET_ID }}
+          ec2_security_group_id: ${{ secrets.AWS_SECURITY_GROUP_ID }}
+          ec2_instance_ttl: 40
+          ec2_spot_instance_strategy: None
+
+  build:
+    needs:
+      - start-runner
+    runs-on: ${{ github.run_id }}
     steps:
       - name: Login to DockerHub
         uses: docker/login-action@v3
@@ -142,14 +191,6 @@ jobs:
         run: |
           . .tvm/bin/activate
           tutor distro run-extra-commands
-
-      - name: Prepare docker if building MFE
-        if: ${{ inputs.SERVICE == 'mfe' }}
-        shell: bash
-        run: |
-          echo "[worker.oci]" > buildkit.toml
-          echo "max-parallelism = 2" >> buildkit.toml
-          docker buildx create --use --node=max2cpu --driver=docker-container --config=./buildkit.toml
 
       - name: Build service image with no cache
         shell: bash
