@@ -78,6 +78,10 @@ jobs:
           ec2_security_group_id: ${{ secrets.AWS_SECURITY_GROUP_ID }}
           ec2_instance_ttl: 40
           ec2_spot_instance_strategy: None
+          ec2_instance_tags: >                # Required for IAM role resource permission scoping
+            [
+                {"Key": "Project", "Value": "GitHub Actions Self-hosted Runners"}
+            ]
 
   build:
     needs:
