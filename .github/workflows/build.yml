@@ -33,6 +33,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ inputs.STRAIN_PATH }}
 
     steps:
       - name: Login to DockerHub
@@ -48,9 +52,13 @@ jobs:
           ref: ${{ inputs.STRAIN_REPOSITORY_BRANCH }}
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Set TVM project name and version
-        shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}
+      - name: Setup Virtual Environment
+        run: |
+          python -m venv .tvm
+          . venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
+
+      - name: Get tutor version from config.yml
         run: |
           if [ ! -e "./config.yml" ]; then
             echo "ERROR: file config.yml doesn't exist"
@@ -58,7 +66,6 @@ jobs:
           fi
 
           # Initialize variables
-          strain_name=""
           strain_tutor_version=""
 
           # Read config.yml line by line
@@ -67,51 +74,27 @@ jobs:
               name=$(echo "$line" | cut -d ":" -f1)
               value=$(echo "$line" | cut -d ":" -f2- | awk '{$1=$1};1' | tr -d '\r')
 
-              case $name in
-                *"PICASSO_APP_NAME"*)
-                  strain_name=$value
-                  ;;
-                *"PICASSO_TUTOR_VERSION"*)
-                  strain_tutor_version=$value
-                  ;;
-              esac
+              if [ "$name" == "PICASSO_TUTOR_VERSION" ]; then
+                strain_tutor_version=$value
+                break
+              fi
             fi
           done < "config.yml"
 
           # Check if variables are set
-          if [ -z "$strain_name" ]; then
-            echo "ERROR: PICASSO_APP_NAME not found in the given config.yml" >&2
-            exit 1
-          fi
 
           if [ -z "$strain_tutor_version" ]; then
             echo "ERROR: PICASSO_TUTOR_VERSION not found in the given config.yml" >&2
             exit 1
           fi
 
-          echo "PICASSO_APP_NAME=${strain_name}" >> $GITHUB_ENV
           echo "PICASSO_TUTOR_VERSION=${strain_tutor_version}" >> $GITHUB_ENV
 
-      - name: Install TVM
-        shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}
+      - name: Install Tutor version from config.yml
         run: |
-          pip install git+https://github.com/eduNEXT/tvm.git
-
-      - name: Configure TVM project
-        shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}
-        run: |
-          tvm install $PICASSO_TUTOR_VERSION
-          tvm project init $PICASSO_APP_NAME $PICASSO_TUTOR_VERSION
-
-          # This command copies all the files and folders
-          # from the repository STRAIN_PATH to the recently above created TVM PROJECT folder
-          cp -r $(ls --ignore=$PICASSO_APP_NAME) $PICASSO_APP_NAME/
+          pip install tutor==$TUTOR_VERSION
 
       - name: Enable picasso plugin
-        shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.PICASSO_APP_NAME }}
         run: |
           . .tvm/bin/activate
 
@@ -129,10 +112,7 @@ jobs:
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Execute extra commands
-        shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.PICASSO_APP_NAME }}
         run: |
-          . .tvm/bin/activate
           tutor picasso run-extra-commands
 
       - name: Prepare docker if building MFE
@@ -144,20 +124,14 @@ jobs:
           docker buildx create --use --node=max2cpu --driver=docker-container --config=./buildkit.toml
 
       - name: Build service image with no cache
-        shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.PICASSO_APP_NAME }}
         env:
           SERVICE: ${{ inputs.SERVICE }}
         run: |
-          . .tvm/bin/activate
           tutor config save
           tutor images build $SERVICE --no-cache
 
       - name: Push service image to DockerHub
-        shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.PICASSO_APP_NAME }}
         env:
           SERVICE: ${{ inputs.SERVICE }}
         run: |
-          . .tvm/bin/activate
           tutor images push $SERVICE
