@@ -68,10 +68,10 @@ jobs:
               value=$(echo "$line" | cut -d ":" -f2- | awk '{$1=$1};1' | tr -d '\r')
 
               case $name in
-                *"TUTOR_APP_NAME"*)
+                *"PICASSO_APP_NAME"*)
                   strain_name=$value
                   ;;
-                *"TUTOR_VERSION"*)
+                *"PICASSO_TUTOR_VERSION"*)
                   strain_tutor_version=$value
                   ;;
               esac
@@ -80,17 +80,17 @@ jobs:
 
           # Check if variables are set
           if [ -z "$strain_name" ]; then
-            echo "ERROR: TUTOR_APP_NAME not found in the given config.yml" >&2
+            echo "ERROR: PICASSO_APP_NAME not found in the given config.yml" >&2
             exit 1
           fi
 
           if [ -z "$strain_tutor_version" ]; then
-            echo "ERROR: TUTOR_VERSION not found in the given config.yml" >&2
+            echo "ERROR: PICASSO_TUTOR_VERSION not found in the given config.yml" >&2
             exit 1
           fi
 
-          echo "TUTOR_APP_NAME=${strain_name}" >> $GITHUB_ENV
-          echo "TUTOR_VERSION=${strain_tutor_version}" >> $GITHUB_ENV
+          echo "PICASSO_APP_NAME=${strain_name}" >> $GITHUB_ENV
+          echo "PICASSO_TUTOR_VERSION=${strain_tutor_version}" >> $GITHUB_ENV
 
       - name: Install TVM
         shell: bash
@@ -102,16 +102,16 @@ jobs:
         shell: bash
         working-directory: ${{ inputs.STRAIN_PATH }}
         run: |
-          tvm install $TUTOR_VERSION
-          tvm project init $TUTOR_APP_NAME $TUTOR_VERSION
+          tvm install $PICASSO_TUTOR_VERSION
+          tvm project init $PICASSO_APP_NAME $PICASSO_TUTOR_VERSION
 
           # This command copies all the files and folders
           # from the repository STRAIN_PATH to the recently above created TVM PROJECT folder
-          cp -r $(ls --ignore=$TUTOR_APP_NAME) $TUTOR_APP_NAME/
+          cp -r $(ls --ignore=$PICASSO_APP_NAME) $PICASSO_APP_NAME/
 
       - name: Enable picasso plugin
         shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.PICASSO_APP_NAME }}
         run: |
           . .tvm/bin/activate
 
@@ -130,7 +130,7 @@ jobs:
 
       - name: Execute extra commands
         shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.PICASSO_APP_NAME }}
         run: |
           . .tvm/bin/activate
           tutor picasso run-extra-commands
@@ -145,7 +145,7 @@ jobs:
 
       - name: Build service image with no cache
         shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.PICASSO_APP_NAME }}
         env:
           SERVICE: ${{ inputs.SERVICE }}
         run: |
@@ -155,7 +155,7 @@ jobs:
 
       - name: Push service image to DockerHub
         shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.PICASSO_APP_NAME }}
         env:
           SERVICE: ${{ inputs.SERVICE }}
         run: |
