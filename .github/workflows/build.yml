@@ -109,22 +109,14 @@ jobs:
           # from the repository STRAIN_PATH to the recently above created TVM PROJECT folder
           cp -r $(ls --ignore=$TUTOR_APP_NAME) $TUTOR_APP_NAME/
 
-      - name: Enable distro plugin
+      - name: Enable picasso plugin
         shell: bash
         working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         run: |
           . .tvm/bin/activate
 
-          major_version=$(pip show tutor | grep Version | awk '{print $2}' | cut -d'.' -f1)
-          distro_version=$(
-              git ls-remote --tags https://github.com/eduNEXT/tutor-contrib-edunext-distro \
-              | grep -E "$major_version\\.[0-9]+\\.[0-9]+$" \
-              | tail -n 1 \
-              | awk -F'/' '{print $NF}' \
-          )
-
-          pip install git+https://github.com/eduNEXT/tutor-contrib-edunext-distro@$distro_version
-          tutor plugins enable distro
+          pip install git+https://github.com/eduNEXT/tutor-contrib-picasso@v0.1.0
+          tutor plugins enable picasso
 
       - name: Setup SSH agent for private repositories cloning
         uses: webfactory/ssh-agent@v0.9.0
@@ -141,7 +133,7 @@ jobs:
         working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         run: |
           . .tvm/bin/activate
-          tutor distro run-extra-commands
+          tutor picasso run-extra-commands
 
       - name: Prepare docker if building MFE
         if: ${{ inputs.SERVICE == 'mfe' }}
