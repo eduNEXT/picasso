@@ -90,6 +90,7 @@ jobs:
   build:
     needs:
       - start-runner
+    if: ${{ needs.start-runner.result == 'success' || needs.start-runner.result == 'skipped' }}
     runs-on: ${{ inputs.ENABLE_SELF_HOSTED_RUNNER == true && github.run_id || 'ubuntu-latest' }}
     steps:
       - name: Login to DockerHub
