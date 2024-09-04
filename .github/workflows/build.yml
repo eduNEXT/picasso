@@ -1,0 +1,171 @@
+name: Picasso V2
+
+on:
+  workflow_call:
+    inputs:
+      STRAIN_REPOSITORY:
+        description: 'The repository for strains to checkout. It should follow the format: ORGANIZATION/REPO'
+        required: true
+        type: string
+      STRAIN_REPOSITORY_BRANCH:
+        description: 'The branch of the repository to checkout'
+        required: true
+        type: string
+      STRAIN_PATH:
+        description: 'The path within the repository for strains'
+        required: true
+        type: string
+      SERVICE:
+        description: 'The service name to build'
+        required: true
+        type: string
+    secrets:
+      DOCKERHUB_USERNAME:
+        description: 'DockerHub username for login'
+        required: true
+      DOCKERHUB_PASSWORD:
+        description: 'DockerHub password for login'
+        required: true
+      SSH_PRIVATE_KEY:
+        description: 'Service user SSH key for repository checkout'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Checkout strains repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.STRAIN_REPOSITORY }}
+          ref: ${{ inputs.STRAIN_REPOSITORY_BRANCH }}
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Set TVM project name and version
+        shell: bash
+        working-directory: ${{ inputs.STRAIN_PATH }}
+        run: |
+          if [ ! -e "./config.yml" ]; then
+            echo "ERROR: file config.yml doesn't exist"
+            exit 1 # terminate and indicate error
+          fi
+
+          # Initialize variables
+          strain_name=""
+          strain_tutor_version=""
+
+          # Read config.yml line by line
+          while IFS= read -r line || [[ -n $line ]]; do
+            if [[ "$line" == *":"* ]]; then
+              name=$(echo "$line" | cut -d ":" -f1)
+              value=$(echo "$line" | cut -d ":" -f2- | awk '{$1=$1};1' | tr -d '\r')
+
+              case $name in
+                *"TUTOR_APP_NAME"*)
+                  strain_name=$value
+                  ;;
+                *"TUTOR_VERSION"*)
+                  strain_tutor_version=$value
+                  ;;
+              esac
+            fi
+          done < "config.yml"
+
+          # Check if variables are set
+          if [ -z "$strain_name" ]; then
+            echo "ERROR: TUTOR_APP_NAME not found in the given config.yml" >&2
+            exit 1
+          fi
+
+          if [ -z "$strain_tutor_version" ]; then
+            echo "ERROR: TUTOR_VERSION not found in the given config.yml" >&2
+            exit 1
+          fi
+
+          echo "TUTOR_APP_NAME=${strain_name}" >> $GITHUB_ENV
+          echo "TUTOR_VERSION=${strain_tutor_version}" >> $GITHUB_ENV
+
+      - name: Install TVM
+        shell: bash
+        working-directory: ${{ inputs.STRAIN_PATH }}
+        run: |
+          pip install git+https://github.com/eduNEXT/tvm.git
+
+      - name: Configure TVM project
+        shell: bash
+        working-directory: ${{ inputs.STRAIN_PATH }}
+        run: |
+          tvm install $TUTOR_VERSION
+          tvm project init $TUTOR_APP_NAME $TUTOR_VERSION
+
+          # This command copies all the files and folders
+          # from the repository STRAIN_PATH to the recently above created TVM PROJECT folder
+          cp -r $(ls --ignore=$TUTOR_APP_NAME) $TUTOR_APP_NAME/
+
+      - name: Enable distro plugin
+        shell: bash
+        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        run: |
+          . .tvm/bin/activate
+
+          major_version=$(pip show tutor | grep Version | awk '{print $2}' | cut -d'.' -f1)
+          distro_version=$(
+              git ls-remote --tags https://github.com/eduNEXT/tutor-contrib-edunext-distro \
+              | grep -E "$major_version\\.[0-9]+\\.[0-9]+$" \
+              | tail -n 1 \
+              | awk -F'/' '{print $NF}' \
+          )
+
+          pip install git+https://github.com/eduNEXT/tutor-contrib-edunext-distro@$distro_version
+          tutor plugins enable distro
+
+      - name: Setup SSH agent for private repositories cloning
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add GitHub to known hosts
+        shell: bash
+        run: |
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Execute extra commands
+        shell: bash
+        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        run: |
+          . .tvm/bin/activate
+          tutor distro run-extra-commands
+
+      - name: Prepare docker if building MFE
+        if: ${{ inputs.SERVICE == 'mfe' }}
+        shell: bash
+        run: |
+          echo "[worker.oci]" > buildkit.toml
+          echo "max-parallelism = 2" >> buildkit.toml
+          docker buildx create --use --node=max2cpu --driver=docker-container --config=./buildkit.toml
+
+      - name: Build service image with no cache
+        shell: bash
+        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        env:
+          SERVICE: ${{ inputs.SERVICE }}
+        run: |
+          . .tvm/bin/activate
+          tutor config save
+          tutor images build $SERVICE --no-cache
+
+      - name: Push service image to DockerHub
+        shell: bash
+        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        env:
+          SERVICE: ${{ inputs.SERVICE }}
+        run: |
+          . .tvm/bin/activate
+          tutor images push $SERVICE
