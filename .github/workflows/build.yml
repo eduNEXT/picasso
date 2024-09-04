@@ -24,7 +24,7 @@ on:
         required: true
         type: string
       ENABLE_SELF_HOSTED_RUNNER:
-        description: 'Enable self-hosted runner'
+        description: 'Enable self-hosted runner for the build job'
         type: boolean
         default: false
     secrets:
