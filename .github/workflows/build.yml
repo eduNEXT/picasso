@@ -23,6 +23,10 @@ on:
         description: 'The EC2 instance type to start'
         required: true
         type: string
+      ENABLE_SELF_HOSTED_RUNNER:
+        description: 'Enable self-hosted runner'
+        type: boolean
+        default: false
     secrets:
       DOCKERHUB_USERNAME:
         description: 'DockerHub username for login'
@@ -35,29 +39,23 @@ on:
         required: true
       AWS_ACCESS_KEY_ID:
         description: 'AWS access key ID'
-        required: true
       AWS_SECRET_ACCESS_KEY:
         description: 'AWS secret access key'
-        required: true
       AWS_REGION:
         description: 'AWS region'
-        required: true
       AWS_EC2_IMAGE_ID:
         description: 'AWS EC2 image ID'
-        required: true
       AWS_SUBNET_ID:
         description: 'AWS subnet ID'
-        required: true
       AWS_SECURITY_GROUP_ID:
         description: 'AWS security group ID'
-        required: true
       GH_APPLICATION_PRIVATE_KEY:
         description: 'GitHub application private key'
-        required: true
 
 jobs:
 
   start-runner:
+    if: ${{ inputs.ENABLE_SELF_HOSTED_RUNNER }}
     timeout-minutes: 5
     name: Start self-hosted EC2 runner
     runs-on: ubuntu-latest
@@ -84,7 +82,7 @@ jobs:
           ec2_security_group_id: ${{ secrets.AWS_SECURITY_GROUP_ID }}
           ec2_instance_ttl: 40
           ec2_spot_instance_strategy: None
-          ec2_instance_tags: >                # Required for IAM role resource permission scoping
+          ec2_instance_tags: >
             [
                 {"Key": "Project", "Value": "GitHub Actions Self-hosted Runners"}
             ]
@@ -92,7 +90,7 @@ jobs:
   build:
     needs:
       - start-runner
-    runs-on: ${{ github.run_id }}
+    runs-on: ${{ inputs.ENABLE_SELF_HOSTED_RUNNER == true && github.run_id || 'ubuntu-latest' }}
     steps:
       - name: Login to DockerHub
         uses: docker/login-action@v3
