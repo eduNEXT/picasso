@@ -19,6 +19,11 @@ on:
         description: 'The service name to build'
         required: true
         type: string
+      ENABLE_LIMIT_BUILDKIT_PARALLELISM:
+        description: 'Enable buildkit parallelism limit to decrease resource usage. Default is true'
+        required: false
+        type: boolean
+        default: true
     secrets:
       DOCKERHUB_USERNAME:
         description: 'DockerHub username for login'
@@ -143,12 +148,11 @@ jobs:
           . .tvm/bin/activate
           tutor distro run-extra-commands
 
-      - name: Prepare docker if building MFE
-        if: ${{ inputs.SERVICE == 'mfe' }}
+      - name: Limit build parallelism to decrease resource usage
         shell: bash
         run: |
-          echo "[worker.oci]" > buildkit.toml
-          echo "max-parallelism = 2" >> buildkit.toml
+          echo "[worker.oci]
+          max-parallelism = 2" > buildkit.toml
           docker buildx create --use --node=max2cpu --driver=docker-container --config=./buildkit.toml
 
       - name: Build service image with no cache
