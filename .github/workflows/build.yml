@@ -193,6 +193,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Push service image to registry
+        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         env:
           SERVICE: ${{ inputs.SERVICE }}
         run: |
