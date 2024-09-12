@@ -154,6 +154,7 @@ jobs:
         run: |
           import os
           import yaml
+          import sys
 
           config_path = os.path.join('.', 'config.yml')
 
