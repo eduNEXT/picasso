@@ -149,12 +149,13 @@ jobs:
       #   working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
 =======
       - name: Get current registry from config.yml
+        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         shell: python
         run: |
           import os
           import yaml
 
-          config_path = os.path.join('${{ inputs.STRAIN_PATH }}', 'config.yml')
+          config_path = os.path.join('.', 'config.yml')
 
           with open(config_path, 'r') as f:
             config = yaml.safe_load(f)
