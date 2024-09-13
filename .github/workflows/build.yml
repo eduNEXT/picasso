@@ -55,7 +55,6 @@ jobs:
 
       - name: Get Tutor configuration values and set them as environment variables
         shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}
         run: |
           TUTOR_APP_NAME=$(python ./scripts/get_tutor_config_value.py TUTOR_APP_NAME)
           TUTOR_VERSION=$(python ./scripts/get_tutor_config_value.py TUTOR_VERSION)
