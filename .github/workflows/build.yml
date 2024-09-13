@@ -82,7 +82,7 @@ jobs:
           env_vars = ""
 
           for key in required_keys:
-            if key not in tutor_config
+            if key not in tutor_config:
               print(f"ERROR: key {key} not found in config.yml")
               sys.exit(1)
             env_vars.join(f"{key}={tutor_config[key]}\n")
