@@ -137,8 +137,8 @@ jobs:
           . .tvm/bin/activate
           tutor picasso run-extra-commands
 
-      - name: Prepare docker if building MFE
-        if: ${{ inputs.SERVICE == 'mfe' }}
+      - name: Limit build parallelism to decrease resource usage
+        if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}
         shell: bash
         run: |
           echo "[worker.oci]
