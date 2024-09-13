@@ -53,6 +53,11 @@ jobs:
           ref: ${{ inputs.STRAIN_REPOSITORY_BRANCH }}
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: Install necessary dependencies
+        run: |
+          pip install pyyaml
+          pip install git+https://github.com/eduNEXT/tvm.git
+
       - name: Get Tutor configuration values and set them as environment variables
         shell: python
         working-directory: ${{ inputs.STRAIN_PATH }}
@@ -94,7 +99,7 @@ jobs:
           # from the repository STRAIN_PATH to the recently above created TVM PROJECT folder
           cp -r $(ls --ignore=$TUTOR_APP_NAME) $TUTOR_APP_NAME/
 
-      - name: Enable picasso plugin
+      - name: Enable and install picasso plugin in Tutor environment
         shell: bash
         working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         run: |
