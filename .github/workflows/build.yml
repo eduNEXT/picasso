@@ -126,13 +126,13 @@ jobs:
           . .tvm/bin/activate
           tutor picasso run-extra-commands
 
-      - name: Prepare docker if building MFE
-        if: ${{ inputs.SERVICE == 'mfe' }}
+      - name: Limit build parallelism to decrease resource usage
+        if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}
         shell: bash
         run: |
-          echo "[worker.oci]" > buildkit.toml
-          echo "max-parallelism = 2" >> buildkit.toml
-          docker buildx create --use --node=max2cpu --driver=docker-container --config=./buildkit.toml
+          echo "[worker.oci]
+          max-parallelism = 3" > buildkit.toml
+          docker buildx create --use --node=limitparallelsteps --driver=docker-container --config=./buildkit.toml
 
       - name: Build service image with no cache
         shell: bash
@@ -144,59 +144,11 @@ jobs:
           tutor config save
           tutor images build $SERVICE --no-cache
 
-      #     # This command copies all the files and folders
-      #     # from the repository STRAIN_PATH to the recently above created TVM PROJECT folder
-      #     cp -r $(ls --ignore=$TUTOR_APP_NAME) $TUTOR_APP_NAME/
-
-      # - name: Enable picasso plugin
-      #   shell: bash
-      #   working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
-      #   run: |
-      #     . .tvm/bin/activate
-
-      #     pip install git+https://github.com/eduNEXT/tutor-contrib-picasso@v0.1.0
-      #     tutor plugins enable picasso
-
-      # - name: Setup SSH agent for private repositories cloning
-      #   uses: webfactory/ssh-agent@v0.9.0
-      #   with:
-      #       ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      # - name: Add GitHub to known hosts
-      #   shell: bash
-      #   run: |
-      #     ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-      # - name: Execute extra commands
-      #   shell: bash
-      #   working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
-      #   run: |
-      #     . .tvm/bin/activate
-      #     tutor picasso run-extra-commands
-
-      - name: Limit build parallelism to decrease resource usage
-        if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}
+      - name: Push service image to DockerHub
         shell: bash
+        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        env:
+          SERVICE: ${{ inputs.SERVICE }}
         run: |
-          echo "[worker.oci]
-          max-parallelism = 3" > buildkit.toml
-          docker buildx create --use --node=limitparallelsteps --driver=docker-container --config=./buildkit.toml
-
-      # - name: Build service image with no cache
-      #   shell: bash
-      #   working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
-      #   env:
-      #     SERVICE: ${{ inputs.SERVICE }}
-      #   run: |
-      #     . .tvm/bin/activate
-      #     tutor config save
-      #     tutor images build $SERVICE --no-cache
-
-      # - name: Push service image to DockerHub
-      #   shell: bash
-      #   working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
-      #   env:
-      #     SERVICE: ${{ inputs.SERVICE }}
-      #   run: |
-      #     . .tvm/bin/activate
-      #     tutor images push $SERVICE
+          . .tvm/bin/activate
+          tutor images push $SERVICE
