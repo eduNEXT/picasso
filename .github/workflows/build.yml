@@ -77,14 +77,21 @@ jobs:
           with open(file_path, "r", encoding="utf-8") as file:
             tutor_config = yaml.safe_load(file)
 
-          for key in ["TUTOR_VERSION", "TUTOR_APP_NAME"]:
-            if key not in tutor_config:
+          required_keys = ["TUTOR_VERSION", "TUTOR_APP_NAME"]
+          optional_keys = ["DOCKER_REGISTRY"]
+          env_vars = ""
+
+          for key in required_keys:
+            if key not in tutor_config
               print(f"ERROR: key {key} not found in config.yml")
               sys.exit(1)
+            env_vars.join(f"{key}={tutor_config[key]}\n")
 
-            github_env = os.getenv("GITHUB_ENV")
-            with open(github_env, "a") as env_file:
-              env_file.write(f"{key}={tutor_config[key]}\n")
+          for key in optional_keys:
+            if key in tutor_config:
+              env_vars.join(f"{key}={tutor_config[key]}\n")
+
+          print(env_vars, file=open(os.environ["GITHUB_ENV"], "a"))
 
       - name: Install TVM
         shell: bash
@@ -146,31 +153,6 @@ jobs:
           . .tvm/bin/activate
           tutor config save
           tutor images build $SERVICE --no-cache
-
-      - name: Install pyyaml for reading config.yml
-        run: |
-          pip install pyyaml
-
-      - name: Get current registry from config.yml
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
-        shell: python
-        run: |
-          import os
-          import yaml
-          import sys
-
-          config_path = os.path.join('.', 'config.yml')
-
-          with open(config_path, 'r') as f:
-            config = yaml.safe_load(f)
-
-          docker_registry = config.get('DOCKER_REGISTRY')
-
-          if not docker_registry:
-            print("ERROR: DOCKER_REGISTRY not found in the given config.yml", file=sys.stderr)
-            exit(1)
-
-          print(f"DOCKER_REGISTRY={docker_registry}", file=open(os.environ['GITHUB_ENV'], 'a'))
 
       - name: Configure AWS credentials
         if: ${{ contains(env.DOCKER_REGISTRY, 'aws') }}
