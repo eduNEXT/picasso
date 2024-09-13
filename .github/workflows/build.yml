@@ -85,15 +85,14 @@ jobs:
             if key not in tutor_config:
               print(f"ERROR: key {key} not found in config.yml")
               sys.exit(1)
-            env_vars.join(f"{key}={tutor_config[key]}\n")
+            env_vars += (f"{key}={tutor_config[key]}\n")
 
           for key in optional_keys:
             if key in tutor_config:
-              env_vars.join(f"{key}={tutor_config[key]}\n")
+              env_vars += (f"{key}={tutor_config[key]}\n")
 
-          print(env_vars)
           with open(os.environ["GITHUB_ENV"], "a") as file:
-            file.write(env_vars)
+            file.write(env_vars.strip())
 
       - name: Install TVM
         shell: bash
