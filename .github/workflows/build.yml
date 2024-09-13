@@ -91,6 +91,7 @@ jobs:
             if key in tutor_config:
               env_vars.join(f"{key}={tutor_config[key]}\n")
 
+          print(env_vars)
           with open(os.environ["GITHUB_ENV"], "a") as file:
             file.write(env_vars)
 
