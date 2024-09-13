@@ -79,8 +79,9 @@ jobs:
               print(f"ERROR: key {key} not found in config.yml")
               sys.exit(1)
 
-            print(f"TUTOR_VERSION={tutor_config['TUTOR_VERSION']} >> $GITHUB_ENV")
-            print(f"TUTOR_APP_NAME={tutor_config['TUTOR_APP_NAME']} >> $GITHUB_ENV")
+            github_env = os.getenv("GITHUB_ENV")
+            with open(github_env, "a") as env_file:
+              env_file.write(f"{key}={tutor_config[key]}\n")
 
       - name: Install TVM
         shell: bash
