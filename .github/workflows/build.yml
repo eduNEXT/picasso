@@ -154,7 +154,7 @@ jobs:
         run: |
           echo "[worker.oci]
           max-parallelism = 3" > buildkit.toml
-          docker buildx create --use --node=max2parallelsteps --driver=docker-container --config=./buildkit.toml
+          docker buildx create --use --node=limitparallelsteps --driver=docker-container --config=./buildkit.toml
 
       - name: Build service image with no cache
         shell: bash
