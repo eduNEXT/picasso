@@ -83,12 +83,6 @@ jobs:
             with open(github_env, "a") as env_file:
               env_file.write(f"{key}={tutor_config[key]}\n")
 
-      - name: Install TVM
-        shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}
-        run: |
-          pip install git+https://github.com/eduNEXT/tvm.git
-
       - name: Configure TVM project
         shell: bash
         working-directory: ${{ inputs.STRAIN_PATH }}
