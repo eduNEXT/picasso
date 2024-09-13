@@ -83,18 +83,23 @@ jobs:
             with open(github_env, "a") as env_file:
               env_file.write(f"{key}={tutor_config[key]}\n")
 
-      # - name: Install TVM
-      #   shell: bash
-      #   working-directory: ${{ inputs.STRAIN_PATH }}
-      #   run: |
-      #     pip install git+https://github.com/eduNEXT/tvm.git
+      - name: Prepare docker if building MFE
+        if: ${{ inputs.SERVICE == 'mfe' }}
+        shell: bash
+        run: |
+          echo "[worker.oci]" > buildkit.toml
+          echo "max-parallelism = 2" >> buildkit.toml
+          docker buildx create --use --node=max2cpu --driver=docker-container --config=./buildkit.toml
 
-      # - name: Configure TVM project
-      #   shell: bash
-      #   working-directory: ${{ inputs.STRAIN_PATH }}
-      #   run: |
-      #     tvm install $TUTOR_VERSION
-      #     tvm project init $TUTOR_APP_NAME $TUTOR_VERSION
+      - name: Build service image with no cache
+        shell: bash
+        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        env:
+          SERVICE: ${{ inputs.SERVICE }}
+        run: |
+          . .tvm/bin/activate
+          tutor config save
+          tutor images build $SERVICE --no-cache
 
       #     # This command copies all the files and folders
       #     # from the repository STRAIN_PATH to the recently above created TVM PROJECT folder
