@@ -56,8 +56,8 @@ jobs:
       - name: Get Tutor configuration values and set them as environment variables
         shell: bash
         run: |
-          TUTOR_APP_NAME=$(python ./scripts/get_tutor_config_value.py TUTOR_APP_NAME)
-          TUTOR_VERSION=$(python ./scripts/get_tutor_config_value.py TUTOR_VERSION)
+          TUTOR_APP_NAME=$(python ${{ github.action_path }}/scripts/get_tutor_config_value.py TUTOR_APP_NAME)
+          TUTOR_VERSION=$(python ${{ github.action_path }}/scripts/get_tutor_config_value.py TUTOR_VERSION)
 
           echo "TUTOR_APP_NAME=$TUTOR_APP_NAME" >> $GITHUB_ENV
           echo "TUTOR_VERSION=$TUTOR_VERSION" >> $GITHUB_ENV
