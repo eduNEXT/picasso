@@ -149,6 +149,7 @@ jobs:
           tutor distro run-extra-commands
 
       - name: Limit build parallelism to decrease resource usage
+        if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}
         shell: bash
         run: |
           echo "[worker.oci]
