@@ -52,7 +52,7 @@ Before using the workflow, ensure that you have set up the following configurati
      - The service name to build, e.g., ``openedx``. This can be any service recognized by the tutor ecosystem.
      - string
      - Input
-   * ENABLE_LIMIT_BUILDKIT_PARALLELISM (Optional)
+   * - ENABLE_LIMIT_BUILDKIT_PARALLELISM (Optional)
      - Enable enables limiting parallelism with buildkit to a max of 3 parallel build steps that can run at the same time to decrease resource consumption for those setups with low-powered machines. Default is ``true``.
      - boolean
      - Input
