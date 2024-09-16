@@ -20,46 +20,42 @@ Before using the workflow, ensure that you have set up the following configurati
 .. list-table:: Picasso Workflow Configuration
    :header-rows: 1
 
-   * - Name
+   * - Variable
      - Description
      - Type
-     - Default
      - Source
-   * - DOCKERHUB_USERNAME
+   * - DOCKERHUB_USERNAME (Required)
      - DockerHub username to push images. This username should be stored as a secret in the repository.
      - string
-     - None
      - Secret
-   * - DOCKERHUB_PASSWORD
+   * - DOCKERHUB_PASSWORD (Required)
      - DockerHub password for login. This password should be generated from DockerHub and stored as a secret in the repository.
      - string
-     - None
      - Secret
-   * - SSH_PRIVATE_KEY
-     - SSH private key for repository checkout. This key should have access to the repository specified in `STRAIN_REPOSITORY`.
+   * - SSH_PRIVATE_KEY (Required)
+     - SSH private key for repository checkout. This key should have access to the repository specified in ``STRAIN_REPOSITORY``.
      - string
-     - None
      - Secret
-   * - STRAIN_REPOSITORY
-     - The repository to clone the strain from, e.g., edunext/repository-name. This repository should contain the files necessary to build the image within the specified path.
+   * - STRAIN_REPOSITORY (Required)
+     - The repository to clone the strain from, e.g., ``edunext/repository-name``. This repository should contain the files necessary to build the image within the specified path.
      - string
-     - None
-     - Environment Variable
-   * - STRAIN_REPOSITORY_BRANCH
-     - The branch to clone the strain from, e.g., main. This branch should contain the version of configuration `config.yml` file used to build the image.
+     - Input
+   * - STRAIN_REPOSITORY_BRANCH (Required)
+     - The branch to clone the strain from, e.g., main. This branch should contain the version of configuration ``config.yml`` file used to build the image.
      - string
-     - main
-     - Environment Variable
-   * - STRAIN_PATH
-     - The path to the strain within the repository structure, e.g., path/to/strain. This path should contain the tutor configuration `config.yml` file used to build the image.
+     - Input
+   * - STRAIN_PATH (Required)
+     - The path to the strain within the repository structure, e.g., ``path/to/strain``. This path should contain the tutor configuration ``config.yml`` file used to build the image.
      - string
-     - None
-     - Environment Variable
-   * - SERVICE
-     - The service name to build, e.g., openedx.
+     - Input
+   * - SERVICE (Required)
+     - The service name to build, e.g., ``openedx``. This can be any service recognized by the tutor ecosystem.
      - string
-     - None
-     - Environment Variable
+     - Input
+   * ENABLE_LIMIT_BUILDKIT_PARALLELISM (Optional)
+     - Enable enables limiting parallelism with buildkit to a max of 3 parallel build steps that can run at the same time to decrease resource consumption for those setups with low-powered machines. Default is ``true``.
+     - boolean
+     - Input
 
 Usage
 *****
@@ -101,7 +97,7 @@ To use the Picasso Workflow, follow these steps:
 
       jobs:
         build:
-          name: Build with Picasso
+          name: Build Open edX Image
           uses: eduNEXT/picasso/.github/workflows/build.yml@main
           with:
             STRAIN_REPOSITORY: ${{ inputs.STRAIN_REPOSITORY }}
@@ -113,11 +109,11 @@ To use the Picasso Workflow, follow these steps:
             DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
             SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-2. Modify the `STRAIN_REPOSITORY`, `STRAIN_REPOSITORY_BRANCH`, `STRAIN_PATH`, and `SERVICE` inputs to match your project requirements.
+2. Modify the ``STRAIN_REPOSITORY``, ``STRAIN_REPOSITORY_BRANCH``, ``STRAIN_PATH``, and ``SERVICE`` inputs to match your project requirements.
 
 3. Trigger the workflow manually via the GitHub Actions tab, using the `workflow_dispatch` feature to input the necessary values. You can also set up a custom trigger for the workflow based on your project requirements.
 
-This example allows building Open edX images with various services such as `openedx`, `mfe`, `codejail`, and more, using the Picasso workflow. You can configure the repository, branch, and strain path for the build, as well as choose the specific service to build.
+This example allows building Open edX images with various services such as ``openedx``, ``mfe``, ``codejail``, and more, using the Picasso workflow. You can configure the repository, branch, and strain path for the build, as well as choose the specific service to build.
 
 
 Getting Help
@@ -139,13 +135,7 @@ The code in this repository is licensed under the MIT License unless otherwise n
 Contributing
 ************
 
-Contributions are welcome. Please review the `How to Contribute`_ guide for more information.
-
-.. _How to Contribute: https://openedx.org/r/how-to-contribute
-
-All contributors are expected to follow the `Open edX Code of Conduct`_.
-
-.. _Open edX Code of Conduct: https://openedx.org/code-of-conduct/
+Contributions are welcome and strongly encouraged! Please, open an issue or submit a pull request to suggest changes or improvements to the workflow.
 
 Reporting Security Issues
 *************************
@@ -156,4 +146,4 @@ Please do not report security vulnerabilities in public forums. Instead, email t
     :target: https://github.com/edunext/picasso/blob/main/LICENSE.txt
     :alt: License
 
-.. |status-badge| image:: http://badges.github.io/stability-badges/dist/experimental.svg
+.. |status-badge| image:: http://badges.github.io/stability-badges/dist/Status-Maintained-brightgreen.svg
