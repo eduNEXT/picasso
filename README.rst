@@ -82,9 +82,10 @@ Usage
 
 To use the Picasso Workflow, follow these steps:
 
-1. Ensure your repository includes a workflow YAML file similar to the one below. This example demonstrates how to build an Open edX image using the Picasso workflow:
+1. Ensure your repository calls the Picasso workflow like the one below. This example demonstrates how to build an Open edX image using the Picasso workflow:
 
    .. code-block:: yaml
+
       jobs:
         build:
           name: Build Open edX Image
