@@ -20,7 +20,9 @@ These inputs can be set in the workflow file that calls the Picasso workflow usi
 
 .. `Workflow syntax for GitHub Actions`: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
 
-These inputs can be set in the workflow file that calls the Picasso workflow using the ``with`` keyword, by manually setting them in the workflow file, or by using the ``workflow_dispatch`` event.
+These inputs can be set in the workflow file that calls the Picasso workflow using the ``with`` keyword, by manually setting them in the workflow file, or by using the ``workflow_dispatch`` event. For more details on how to set input values in Github Actions, please refer to the `Workflow syntax for GitHub Actions`_ documentation.
+
+.. `Workflow syntax for GitHub Actions`: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
 
 Here is an example of how to use the Picasso workflow with the inputs set:
 
