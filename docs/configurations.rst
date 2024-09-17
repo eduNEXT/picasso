@@ -16,7 +16,9 @@ Inputs are the parameters that you can set to customize the behavior of the Pica
 * ``SERVICE (required)``: The name of the service that will be built. This service should be supported by Tutor or by a tutor plugin previously installed.
 * ``ENABLE_LIMIT_BUILDKIT_PARALLELISM (optional)``: If set to ``true``, the build process parallel steps will be limited by 3, which is the threshold found where both Open edX and MFE images are built without running out of resources in the Github Actions runner (please, see `PR #12`_ for more details) . If set to ``false``, the parallelism will the buildkit default. Default is ``true``. Set to ``false`` if you have a runner with more resources.
 
-These inputs can be set in the workflow file that calls the Picasso workflow using the ``with`` keyword, by manually setting them in the workflow file, or by using the ``workflow_dispatch`` event.
+These inputs can be set in the workflow file that calls the Picasso workflow using the ``with`` keyword, by manually setting them in the workflow file, or by using the ``workflow_dispatch`` event. For more details on how to set input values in Github Actions, please refer to the `Workflow syntax for GitHub Actions`_ documentation.
+
+.. `Workflow syntax for GitHub Actions`: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
 
 Here is an example of how to use the Picasso workflow with the inputs set:
 
