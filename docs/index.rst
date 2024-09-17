@@ -12,4 +12,3 @@ Contents
 
 - `Configurations <configurations.rst>`_
 - `Workflow Usage <reuse_workflow.rst>`_
-- `Performance Considerations <performance.rst>`_
