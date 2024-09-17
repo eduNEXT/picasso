@@ -94,12 +94,6 @@ jobs:
           with open(os.environ["GITHUB_ENV"], "a") as file:
             file.write(env_vars.strip())
 
-      - name: Debug Tutor configuration values
-        run: |
-          echo "TUTOR_VERSION: $TUTOR_VERSION"
-          echo "TUTOR_APP_NAME: $TUTOR_APP_NAME"
-          echo "DOCKER_REGISTRY: $DOCKER_REGISTRY"
-
       - name: Install TVM
         shell: bash
         working-directory: ${{ inputs.STRAIN_PATH }}
@@ -170,12 +164,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Login to AWS ECR
+      - name: Login to AWS ECR if Docker registry is AWS
         if: ${{ contains(env.DOCKER_REGISTRY, 'aws') }}
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Login to DockerHub
-        if: ${{ contains(env.DOCKER_REGISTRY, 'docker.io') }}
+      - name: Login to DockerHub if Docker registry is DockerHub or not set
+        if: ${{ env.DOCKER_REGISTRY == null || contains(env.DOCKER_REGISTRY, 'docker.io') }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
