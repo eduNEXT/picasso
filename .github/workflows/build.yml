@@ -93,6 +93,7 @@ jobs:
 
           with open(os.environ["GITHUB_ENV"], "a") as file:
             file.write(env_vars.strip())
+            print(file.read())
 
       - name: Install TVM
         shell: bash
