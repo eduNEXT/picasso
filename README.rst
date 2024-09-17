@@ -8,9 +8,11 @@ Purpose
 
 Picasso is a tool designed to help teams simplify the build process for the Open edX Docker images, tailored explicitly for use in Tutor environments. It enables the addition of custom behaviors and features through the internal plugin `tutor-contrib-picasso`_, allowing for additional flexibility during the build process.
 
-This GitHub Actions workflow replaces the existing Jenkins-based pipeline and integrates directly with other workflows, allowing it to be called in custom jobs. Picasso leverages Tutor to build images from the Palm version of Open edX onwards. The resulting Docker images can be used for both production and development environments, simplifying the process of managing multiple environments while ensuring consistency.
+This GitHub Actions workflow replaces the existing `Jenkins-based pipeline`_ and integrates directly with other workflows, allowing it to be called in custom jobs. Picasso leverages Tutor to build images from the Palm version of Open edX onwards. The resulting Docker images can be used for both production and development environments, simplifying the process of managing multiple environments while ensuring consistency.
 
 With Picasso, teams can build custom Open edX images with additional functionality, making it easier to maintain, extend, and deploy environments using modern CI/CD practices.
+
+.. _`Jenkins-based pipeline`: https://github.com/eduNEXT/dedalo-scripts/blob/main/jenkins/picasso_v2
 
 Workflow Overview
 *****************
