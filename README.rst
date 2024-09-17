@@ -146,11 +146,6 @@ If you encounter any issues with the workflow or need further assistance, please
 .. _GitHub Actions documentation: https://docs.github.com/en/actions
 .. _Picasso Workflow repository: https://github.com/edunext/picasso/issues
 
-License
-*******
-
-The code in this repository is licensed under the MIT License unless otherwise noted. Please see `LICENSE.txt <LICENSE.txt>`_ for details.
-
 Contributing
 ************
 
