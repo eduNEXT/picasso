@@ -93,7 +93,12 @@ jobs:
 
           with open(os.environ["GITHUB_ENV"], "a") as file:
             file.write(env_vars.strip())
-            print(file.read())
+
+      - name: Debug Tutor configuration values
+        run: |
+          echo "TUTOR_VERSION: $TUTOR_VERSION"
+          echo "TUTOR_APP_NAME: $TUTOR_APP_NAME"
+          echo "DOCKER_REGISTRY: $DOCKER_REGISTRY"
 
       - name: Install TVM
         shell: bash
