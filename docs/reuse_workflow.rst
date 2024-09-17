@@ -1,14 +1,15 @@
 Reusing the Picasso Workflow
 ###################################
 
-Picasso Workflow is a reusable Github Workflow implemented to be flexible enough to be adopted by different organizations with their own requirements. This document will guide you through different ways of reusing the Picasso workflow.
+This document will guide you through different ways of reusing the Picasso workflow.
 
-To use a reusable workflow from your own repository, you can use the `uses` keyword in your workflow file. The `uses` keyword specifies the location of the reusable workflow file. The location can be a specific tag, branch, or commit in the same repository or in a different repository. The `uses` keyword can also be used to reference a workflow file in the same repository.
-So the (caller) workflow can access the reusable workflow file (callee), the callee must be in a public repository. If the callee is in a private repository, the caller must belong to the same organization as the callee. For more information, see `Reusing workflows`_.
+To use a reusable workflow from your own repository, you can use the ``uses`` keyword in your workflow file. The ``uses`` keyword specifies the location of the reusable workflow file, which can be a specific tag, branch, or commit to the same repository or in a different repository. 
+
+The (caller) workflow can access the reusable workflow file (callee) without restriction if the callee is public. If the callee is in a private repository, then the caller must belong to the same organization as the callee.
+
+For more information, see `Reusing workflows`_.
 
 .. _`Reusing workflows`: https://docs.github.com/en/actions/sharing-automations/reusing-workflows
-
-You can use the Picasso workflow in different ways, depending on your needs.
 
 Here is an example of how to use the Picasso workflow using the `workflow_dispatch`_ event:
 
@@ -57,7 +58,7 @@ Here is an example of how to use the Picasso workflow using the `workflow_dispat
             DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
             SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-In this example, you can trigger the workflow manually via the GitHub Actions tab, using the `workflow_dispatch` feature to input the necessary values. The workflow will then build the Open edX image based on the provided inputs.
+In this example, you can trigger the workflow manually via the GitHub Actions tab, using the ``workflow_dispatch`` feature to input the necessary values. Based on the provided inputs, the workflow will then build the Open edX image.
 
 Here's an example of how to use the Picasso workflow using the `push`_ event:
 
@@ -87,7 +88,7 @@ Here's an example of how to use the Picasso workflow using the `push`_ event:
             SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
 
-In this example, the workflow will be triggered automatically when a push event occurs on the `master` or `main` branch, and the path `redwood/base/**` is affected. The workflow will then build the Open edX image based on the provided inputs.
+In this example, the workflow will be triggered automatically when a push event occurs on the ``master`` or ``main`` branch, affecting the path ``redwood/base/**``. Based on the provided inputs, the workflow will then build the Open edX image.
 
 For more details on the available events, see `Events that trigger workflows`_.
 
