@@ -47,11 +47,11 @@ Before using the workflow, ensure that you have set up the following configurati
      - Type
      - Source
    * - DOCKERHUB_USERNAME (Required)
-     - Docker Hub username to push images. This username should be stored as a secret in the repository.
+     - Docker Hub username to push images.
      - string
      - Secret
    * - DOCKERHUB_PASSWORD (Required)
-     - Docker Hub password for login. This password should be generated from DockerHub and stored as a secret in the repository.
+     - Docker Hub password for login.
      - string
      - Secret
    * - SSH_PRIVATE_KEY (Required)
@@ -59,7 +59,7 @@ Before using the workflow, ensure that you have set up the following configurati
      - string
      - Secret
    * - STRAIN_REPOSITORY (Required)
-     - The repository to clone the strain from, e.g., ``edunext/repository-name``. This repository should contain the files necessary to build the image within the specified path.
+     - The repository to clone the strain from, e.g., ``edunext/repository-name``.
      - string
      - Input
    * - STRAIN_REPOSITORY_BRANCH (Required)
@@ -67,7 +67,7 @@ Before using the workflow, ensure that you have set up the following configurati
      - string
      - Input
    * - STRAIN_PATH (Required)
-     - The path to the strain within the repository structure, e.g., ``path/to/strain``. This path should contain the tutor configuration ``config.yml`` file used to build the image.
+     - The path to the strain within the repository structure, e.g., ``path/to/strain``.
      - string
      - Input
    * - SERVICE (Required)
@@ -75,7 +75,7 @@ Before using the workflow, ensure that you have set up the following configurati
      - string
      - Input
    * - ENABLE_LIMIT_BUILDKIT_PARALLELISM (Optional)
-     - Enables limiting parallelism with buildkit to a max of 3 parallel build steps that can run at the same time to decrease resource consumption for those setups with low-powered machines. Default is ``true``.
+     - Enables limiting parallelism with buildkit to decrease resource consumption for those setups with low-powered machines. Default is ``true``.
      - boolean
      - Input
 
