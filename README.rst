@@ -12,6 +12,24 @@ This GitHub Actions workflow replaces the existing Jenkins-based pipeline and in
 
 With Picasso, teams can create custom Open edX and MFE images with additional functionality, making it easier to maintain, extend, and deploy environments using modern CI/CD practices.
 
+Workflow Overview
+*****************
+
+The Picasso Workflow is designed to build Open edX Docker images for Tutor environments using a configuration-driven approach.
+
+Key features of the Picasso Workflow include:
+
+- **Runs on GitHub-hosted runners**: By default, the workflow uses ``ubuntu-latest`` runners to execute jobs.
+- **Builds and pushes Docker images**: The workflow logs into DockerHub and pushes the built service images.
+- **Supports multiple services**: You can specify the service to build (e.g., ``openedx``, ``mfe``, ``codejail``, etc.) using the ``SERVICE`` input.
+- **Customizable repository and strain**: The workflow allows for specifying the repository, branch, and path to the strain being built.
+- **Configurable BuildKit parallelism**: By default, the workflow limits parallelism during the build process to optimize resource usage, although this can be toggled using the `ENABLE_LIMIT_BUILDKIT_PARALLELISM` input.
+- **Private repository access**: SSH keys are used to clone private repositories securely.
+- **Extra commands**: The workflow allows running additional custom commands with ``tutor picasso run-extra-commands``. For details, refer to the `tutor-contrib-picasso`_ documentation.
+- **Environment setup**: The workflow sets up and configures Tutor Virtual Environments (TVM), installs necessary plugins like ``tutor-contrib-picasso``, and prepares the environment to build and push Docker images.
+
+.. _tutor-contrib-picasso: https://github.com/eduNEXT/tutor-contrib-picasso/
+
 Configuration
 *************
 
