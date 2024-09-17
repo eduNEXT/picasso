@@ -19,8 +19,8 @@ The Picasso Workflow is designed to build Open edX Docker images for Tutor envir
 
 Key features of the Picasso Workflow include:
 
-- **Runs on GitHub-hosted runners**: By default, the workflow uses ``ubuntu-latest`` runners to execute jobs.
-- **Builds and pushes Docker images**: The workflow logs into DockerHub and pushes the built service images.
+- **Runs on GitHub-hosted runners**: By default, the workflow uses ``ubuntu-latest`` runners to execute jobs, this can't be changed to self-hosted runners for the time being.
+- **Builds and pushes Docker images**: The workflow logs into DockerHub and pushes the built service images. This can be customized to push images to other registries.
 - **Supports multiple services**: You can specify the service to build (e.g., ``openedx``, ``mfe``, ``codejail``, etc.) using the ``SERVICE`` input.
 - **Customizable repository and strain**: The workflow allows for specifying the repository, branch, and path to the strain being built.
 - **Configurable BuildKit parallelism**: By default, the workflow limits parallelism during the build process to optimize resource usage, although this can be toggled using the `ENABLE_LIMIT_BUILDKIT_PARALLELISM` input.
@@ -132,7 +132,6 @@ To use the Picasso Workflow, follow these steps:
 3. Trigger the workflow manually via the GitHub Actions tab, using the `workflow_dispatch` feature to input the necessary values. You can also set up a custom trigger for the workflow based on your project requirements.
 
 This example allows building Open edX images with various services such as ``openedx``, ``mfe``, ``codejail``, and more, using the Picasso workflow. You can configure the repository, branch, and strain path for the build, as well as choose the specific service to build.
-
 
 Getting Help
 ************
