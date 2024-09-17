@@ -8,6 +8,6 @@ Picasso is a `Github Workflow`_ implemented to be flexible enough to be adopted 
 Contents
 ********
 
-- `Configuration Inputs <general_configuration.rst>`_
+- `Inputs <general_configuration.rst>`_
 - `Secrets <secrets_configuration.rst>`_
 
