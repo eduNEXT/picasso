@@ -11,10 +11,12 @@ Inputs
 Inputs are the parameters that you can set to customize the behavior of the Picasso workflow. The following inputs are available:
 
 * ``STRAIN_REPOSITORY (required)``: The URL of the repository that contains the strain configuration. This repository should contain a valid ``config.yml`` file that defines the strains that will be built.
-* ``STRAIN_REPOSITORY_BRANCH (required)``: The branch of the ``STRAIN_REPOSITORY`` that will be used to build the strains.
+* ``STRAIN_REPOSITORY_BRANCH (required)``: The branch of the ``STRAIN_REPOSITORY`` to clone the strain configuration from. This branch should contain the version of the configuration file used to build the image.
 * ``STRAIN_PATH (required)``: The path to the directory that contains the strain configuration file. This path should be relative to the root of the repository.
 * ``SERVICE (required)``: The name of the service that will be built. This service should be supported by Tutor or by a tutor plugin previously installed.
 * ``ENABLE_LIMIT_BUILDKIT_PARALLELISM (optional)``: If set to ``true``, the build process parallel steps will be limited by 3, which is the threshold found where both Open edX and MFE images are built without running out of resources in the Github Actions runner (please, see `PR #12`_ for more details) . If set to ``false``, the parallelism will the buildkit default. Default is ``true``. Set to ``false`` if you have a runner with more resources.
+
+These inputs can be set in the workflow file that calls the Picasso workflow using the ``with`` keyword, by manually setting them in the workflow file, or by using the ``workflow_dispatch`` event.
 
 Here is an example of how to use the Picasso workflow with the inputs set:
 
@@ -41,6 +43,10 @@ Secrets are the sensitive data that you can set to customize the behavior of the
 * ``DOCKERHUB_USERNAME (required)``: The username of the Docker Hub account where the images will be pushed. By default, the images are pushed to a ``docker.io`` registry using this username.
 * ``DOCKERHUB_PASSWORD (required)``: The password of the Docker Hub account where the images will be pushed. This password is used to authenticate the Docker client when pushing the images.
 * ``SSH_PRIVATE_KEY (required)``: The private SSH key that will be used to clone private repositories, including the ``STRAIN_REPOSITORY`` and all private requirements for the Open edX images. Therefore, this key should have read access to all the repositories that are required to build the images.
+
+These variables should be set in the Github Actions repository's secrets settings. For more information on how to set secrets in Github, please refer to the `Using secrets in GitHub Actions`_ documentation.
+
+.. _`Using secrets in GitHub Actions`: https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions
 
 Here is an example of how to use the Picasso workflow with the inputs and secrets set:
 
