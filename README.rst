@@ -6,7 +6,7 @@ Streamlines the build of Open edX Docker images for Tutor environments, providin
 Purpose
 *******
 
-Picasso is a tool designed to help teams streamline the build process for both Open edX platform and Micro-Frontends (MFEs) Docker images, specifically tailored for use in Tutor environments. It enables the addition of custom behaviors and features through the internal plugin `tutor-contrib-picasso`, allowing for enhanced flexibility during the build process.
+Picasso is a tool designed to help teams streamline the build process for both Open edX platform and Micro-Frontends (MFEs) Docker images, specifically tailored for use in Tutor environments. It enables the addition of custom behaviors and features through the internal plugin ``tutor-contrib-picasso``, allowing for enhanced flexibility during the build process.
 
 This GitHub Actions workflow replaces the existing Jenkins-based pipeline and integrates directly with other workflows, allowing it to be invoked in custom jobs. Picasso leverages Tutor technology to build images from the Palm version of Open edX onwards, enabling configuration-driven builds using a configuration file. The resulting Docker images can be used for both production and development environments, simplifying the process of managing multiple environments while ensuring consistency.
 
@@ -20,15 +20,16 @@ The Picasso Workflow is designed to build Open edX Docker images for Tutor envir
 Key features of the Picasso Workflow include:
 
 - **Runs on GitHub-hosted runners**: By default, the workflow uses ``ubuntu-latest`` runners to execute jobs, this can't be changed to self-hosted runners for the time being.
-- **Builds and pushes Docker images**: The workflow logs into DockerHub and pushes the built service images. This can be customized to push images to other registries.
+- **Builds and pushes Docker images**: The workflow pushes images to Dockerhub by default. This can be customized to push images to other registries.
 - **Supports multiple services**: You can specify the service to build (e.g., ``openedx``, ``mfe``, ``codejail``, etc.) using the ``SERVICE`` input.
-- **Customizable repository and strain**: The workflow allows for specifying the repository, branch, and path to the strain being built.
-- **Configurable BuildKit parallelism**: By default, the workflow limits parallelism during the build process to optimize resource usage, although this can be toggled using the `ENABLE_LIMIT_BUILDKIT_PARALLELISM` input.
-- **Private repository access**: SSH keys are used to clone private repositories securely.
+- **Customizable repository and strain**: The workflow allows for specifying the repository, branch, and path to the strain being built. This enables building images from different configurations.
+- **Configurable BuildKit parallelism**: By default, the workflow limits parallelism during the build process to optimize resource usage, although this can be toggled using the ``ENABLE_LIMIT_BUILDKIT_PARALLELISM`` input. This is useful for low-powered machines, like `Github Actions standard runners`_.
+- **Private repository access**: SSH keys are used to clone private repositories securely. The SSH private key should be stored as a secret in the repository, and must have access to the repository specified in ``STRAIN_REPOSITORY``.
 - **Extra commands**: The workflow allows running additional custom commands with ``tutor picasso run-extra-commands``. For details, refer to the `tutor-contrib-picasso`_ documentation.
 - **Environment setup**: The workflow sets up and configures Tutor Virtual Environments (TVM), installs necessary plugins like ``tutor-contrib-picasso``, and prepares the environment to build and push Docker images.
 
 .. _tutor-contrib-picasso: https://github.com/eduNEXT/tutor-contrib-picasso/
+.. _Github Actions standard runners: https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners
 
 Configuration
 *************
