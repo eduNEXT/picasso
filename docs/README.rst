@@ -13,3 +13,4 @@ Contents
 - `Configurations <configurations.rst>`_
 - `Workflow Usage <reuse_workflow.rst>`_
 - `Configuring Docker Registries <configuring_docker_registries.rst>`_
+- `Triggering a Build with the GitHub cli <trigger_build_with_cli.rst>`_
