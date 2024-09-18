@@ -3,7 +3,7 @@ Reusing the Picasso Workflow
 
 This document will guide you through different ways of reusing the Picasso workflow.
 
-To use a reusable workflow from your own repository, you can use the ``uses`` keyword in your workflow file. The ``uses`` keyword specifies the location of the reusable workflow file, which can be a specific tag, branch, or commit to the same repository or in a different repository. 
+To use a reusable workflow from your own repository, you can use the ``uses`` keyword in your workflow file. The ``uses`` keyword specifies the location of the reusable workflow file, which can be a specific tag, branch, or commit, either in the same repository or a different repository.
 
 The (caller) workflow can access the reusable workflow file (callee) without restriction if the callee is public. If the callee is in a private repository, then the caller must belong to the same organization as the callee.
 
