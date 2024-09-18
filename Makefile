@@ -1,5 +1,5 @@
 .PHONY: clean help \
-	quality requirements selfcheck test upgrade
+	requirements selfcheck upgrade docs
 
 .DEFAULT_GOAL := help
 
@@ -24,7 +24,7 @@ requirements: ## install development environment requirements
 	pip install -r requirements/pip-tools.txt -r requirements/doc.txt
 
 docs: ## build the documentation
-	$(MAKE) -C docs html
+	cd docs && $(MAKE) html
 
 selfcheck: ## check that the Makefile is well-formed
 	@echo "The Makefile is well-formed."
