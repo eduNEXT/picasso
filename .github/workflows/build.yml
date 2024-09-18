@@ -27,10 +27,10 @@ on:
     secrets:
       DOCKERHUB_USERNAME:
         description: 'DockerHub username for login'
-        required: true
+        required: false
       DOCKERHUB_PASSWORD:
         description: 'DockerHub password for login'
-        required: true
+        required: false
       SSH_PRIVATE_KEY:
         description: 'Service user SSH key for repository checkout'
         required: true
