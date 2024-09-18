@@ -59,10 +59,6 @@ To correctly use Docker Hub or AWS registries to push images, you should set the
 
 .. _`Using secrets in GitHub Actions`: https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions
 
-These variables should be set in the Github Actions repository's secrets settings. For more information on how to set secrets in Github, please refer to the `Using secrets in GitHub Actions`_ documentation.
-
-.. _`Using secrets in GitHub Actions`: https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions
-
 Here is an example of how to use the Picasso workflow with the inputs and secrets set:
 
 .. code-block:: yaml
