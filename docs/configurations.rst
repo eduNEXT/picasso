@@ -42,11 +42,16 @@ Secrets
 
 Secrets are the sensitive data that you can set to customize the behavior of the Picasso workflow. The following secrets are available:
 
-* ``DOCKERHUB_USERNAME (required)``: The username of the Docker Hub account where the images will be pushed. By default, the images are pushed to a ``docker.io`` registry using this username.
-* ``DOCKERHUB_PASSWORD (required)``: The password of the Docker Hub account where the images will be pushed. This password is used to authenticate the Docker client when pushing the images.
 * ``SSH_PRIVATE_KEY (required)``: The private SSH key that will be used to clone private repositories, including the ``STRAIN_REPOSITORY`` and all private requirements for the Open edX images. Therefore, this key should have read access to all the repositories that are required to build the images.
+* ``DOCKERHUB_USERNAME (optional)``: The username of the Docker Hub account where the images will be pushed. By default, the images are pushed to a ``docker.io`` registry using this username.
+* ``DOCKERHUB_PASSWORD (optional)``: The password of the Docker Hub account where the images will be pushed. This password is used to authenticate the Docker client when pushing the images.
+* ``AWS_ACCESS_KEY_ID (optional)``: The access key ID of the AWS account where the images will be pushed. This key is used to authenticate the AWS client when pushing the images to the ECR registry.
+* ``AWS_SECRET_ACCESS_KEY (optional)``: The secret access key of the AWS account where the images will be pushed. This key is used to authenticate the AWS client when pushing the images to the ECR registry.
+* ``AWS_REGION (optional)``: The region of the AWS account where the images will be pushed. This region is used to determine the ECR registry URL where the images will be pushed.
 
-These variables should be set in the Github Actions repository's secrets settings. For more information on how to set secrets in Github, please refer to the `Using secrets in GitHub Actions`_ documentation.
+These variables are mainly used to authenticate with some services like Docker Hub, AWS or GitHub. They should be set in the Github Actions repository's secrets settings. For more information on how to set secrets in Github, please refer to the `Using secrets in GitHub Actions`_ documentation.
+
+To correctly use Docker Hub or AWS registries to push images, you should set the corresponding configuration in your ``config.yml`` file. For more information on how to configure the Docker Hub or AWS registries in the ``config.yml`` file, please refer to the `Configuring Docker Registries <configuring_docker_registries>`_ documentation.
 
 .. _`Using secrets in GitHub Actions`: https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions
 
@@ -68,3 +73,23 @@ Here is an example of how to use the Picasso workflow with the inputs and secret
                 DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
                 DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
                 SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+Or using an AWS registry:
+
+.. code-block:: yaml
+
+    jobs:
+        build:
+            name: Build with Picasso
+            uses: eduNEXT/picasso/.github/workflows/build.yml@main
+            with:
+                STRAIN_REPOSITORY: edunext/build-manifests
+                STRAIN_REPOSITORY_BRANCH: dev/test-latest-image
+                STRAIN_PATH: redwood/base
+                SERVICE: mfe
+                ENABLE_LIMIT_BUILDKIT_PARALLELISM: false
+            secrets:
+                SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+                AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                AWS_REGION: ${{ secrets.AWS_REGION }}
