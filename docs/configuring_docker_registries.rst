@@ -35,4 +35,5 @@ Here is an example of how to use the Picasso Workflow with the inputs and secret
                 AWS_REGION: ${{ secrets.AWS_REGION }}
                 SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-Since these files will contain sensitive data it is recommended to store the build configuration in a private repository.
+.. warning::
+    Since these files will contain sensitive data it is recommended to store the build configuration in a private repository.
