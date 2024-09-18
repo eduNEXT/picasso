@@ -12,3 +12,4 @@ Contents
 
 - `Configurations <configurations.rst>`_
 - `Workflow Usage <reuse_workflow.rst>`_
+- `Configuring Docker Registries <configuring_docker_registries.rst>`_
