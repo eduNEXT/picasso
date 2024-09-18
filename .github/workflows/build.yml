@@ -53,55 +53,35 @@ jobs:
           ref: ${{ inputs.STRAIN_REPOSITORY_BRANCH }}
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Set TVM project name and version
-        shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}
+      - name: Install necessary dependencies
         run: |
-          if [ ! -e "./config.yml" ]; then
-            echo "ERROR: file config.yml doesn't exist"
-            exit 1 # terminate and indicate error
-          fi
-
-          # Initialize variables
-          strain_name=""
-          strain_tutor_version=""
-
-          # Read config.yml line by line
-          while IFS= read -r line || [[ -n $line ]]; do
-            if [[ "$line" == *":"* ]]; then
-              name=$(echo "$line" | cut -d ":" -f1)
-              value=$(echo "$line" | cut -d ":" -f2- | awk '{$1=$1};1' | tr -d '\r')
-
-              case $name in
-                *"TUTOR_APP_NAME"*)
-                  strain_name=$value
-                  ;;
-                *"TUTOR_VERSION"*)
-                  strain_tutor_version=$value
-                  ;;
-              esac
-            fi
-          done < "config.yml"
-
-          # Check if variables are set
-          if [ -z "$strain_name" ]; then
-            echo "ERROR: TUTOR_APP_NAME not found in the given config.yml" >&2
-            exit 1
-          fi
-
-          if [ -z "$strain_tutor_version" ]; then
-            echo "ERROR: TUTOR_VERSION not found in the given config.yml" >&2
-            exit 1
-          fi
-
-          echo "TUTOR_APP_NAME=${strain_name}" >> $GITHUB_ENV
-          echo "TUTOR_VERSION=${strain_tutor_version}" >> $GITHUB_ENV
-
-      - name: Install TVM
-        shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}
-        run: |
+          pip install pyyaml
           pip install git+https://github.com/eduNEXT/tvm.git
+
+      - name: Get Tutor configuration values and set them as environment variables
+        shell: python
+        working-directory: ${{ inputs.STRAIN_PATH }}
+        run: |
+          import os
+          import sys
+          import yaml
+
+          file_path = os.path.join(os.getcwd(), "config.yml")
+          if not os.path.exists(file_path):
+            print("ERROR: file config.yml doesn't exist")
+            sys.exit(1)
+
+          with open(file_path, "r", encoding="utf-8") as file:
+            tutor_config = yaml.safe_load(file)
+
+          for key in ["TUTOR_VERSION", "TUTOR_APP_NAME"]:
+            if key not in tutor_config:
+              print(f"ERROR: key {key} not found in config.yml")
+              sys.exit(1)
+
+            github_env = os.getenv("GITHUB_ENV")
+            with open(github_env, "a") as env_file:
+              env_file.write(f"{key}={tutor_config[key]}\n")
 
       - name: Configure TVM project
         shell: bash
@@ -114,7 +94,7 @@ jobs:
           # from the repository STRAIN_PATH to the recently above created TVM PROJECT folder
           cp -r $(ls --ignore=$TUTOR_APP_NAME) $TUTOR_APP_NAME/
 
-      - name: Enable picasso plugin
+      - name: Enable and install picasso plugin in Tutor environment
         shell: bash
         working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         run: |
