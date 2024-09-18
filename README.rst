@@ -46,11 +46,11 @@ Before using the workflow, ensure that you have set up the following configurati
      - Description
      - Type
      - Source
-   * - DOCKERHUB_USERNAME (Required)
+   * - DOCKERHUB_USERNAME (Optional)
      - Docker Hub username to push images.
      - string
      - Secret
-   * - DOCKERHUB_PASSWORD (Required)
+   * - DOCKERHUB_PASSWORD (Optional)
      - Docker Hub password for login.
      - string
      - Secret
