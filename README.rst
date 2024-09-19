@@ -46,12 +46,24 @@ Before using the workflow, ensure that you have set up the following configurati
      - Description
      - Type
      - Source
-   * - DOCKERHUB_USERNAME (Required)
+   * - DOCKERHUB_USERNAME (Optional)
      - Docker Hub username to push images.
      - string
      - Secret
-   * - DOCKERHUB_PASSWORD (Required)
+   * - DOCKERHUB_PASSWORD (Optional)
      - Docker Hub password for login.
+     - string
+     - Secret
+   * - AWS_ACCESS_KEY_ID (Optional)
+     - AWS access key ID for pushing images to ECR.
+     - string
+     - Secret
+   * - AWS_SECRET_ACCESS_KEY (Optional)
+     - AWS secret access key for pushing images to ECR.
+     - string
+     - Secret
+   * - AWS_REGION (Optional)
+     - AWS region for pushing images to ECR.
      - string
      - Secret
    * - SSH_PRIVATE_KEY (Required)
