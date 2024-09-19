@@ -49,7 +49,7 @@ Consider you're using the Picasso Workflow like in the following snippet to buil
             SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
 .. note::
-    For more information on how to use the Picasso Workflow, please refer to the `Reusing the Picasso Workflow <reuse_workflow.rst>`.
+    For more information on how to use the Picasso Workflow, please refer to the `Reusing the Picasso Workflow <reuse_workflow.rst>`_.
 
 With this workflow you can trigger a build manually via the GitHub Actions tab, using the ``workflow_dispatch`` feature to input the necessary values. However, you can also trigger the workflow using the GitHub CLI.
 
