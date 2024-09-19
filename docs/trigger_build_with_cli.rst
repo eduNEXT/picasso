@@ -48,7 +48,8 @@ Consider you're using the Picasso Workflow like in the following snippet to buil
             DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
             SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-For more information on how to use the Picasso Workflow, please refer to the `Reusing the Picasso Workflow <reuse_workflow.rst>`_.
+.. note::
+    For more information on how to use the Picasso Workflow, please refer to the `Reusing the Picasso Workflow <reuse_workflow.rst>`.
 
 With this workflow you can trigger a build manually via the GitHub Actions tab, using the ``workflow_dispatch`` feature to input the necessary values. However, you can also trigger the workflow using the GitHub CLI.
 
