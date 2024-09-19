@@ -90,7 +90,7 @@ To trigger a build with the GitHub CLI with this workflow setup, you can do the 
       -f "inputs[STRAIN_PATH]=<STRAIN_PATH>"
       -f "inputs[SERVICE]=<SERVICE>"
 
-   Replace each configuration value with the corresponding value for your project. For more information on the configuration values available for the workflow, please refer to the `Picasso Workflow Configuration <configurations.rst>`_. Since the workflow specifies defaults for the inputs, you can omit the inputs that have default values.
+   Replace each configuration value with the corresponding value for your project. For more information on the configuration values available for the workflow, please refer to the `Picasso Workflow Configuration <configurations.rst>`_. Since the workflow specifies defaults for the inputs, you can omit them if you want to use them instead.
 
 This example demonstrate how to trigger a build using the gh cli and the GitHub API, but you can also exclusively use the GitHub CLI to trigger the workflow using the ``gh workflow run`` command. For more information on how to trigger workflows with the GitHub CLI, please refer to the `GitHub CLI documentation`_.
 
