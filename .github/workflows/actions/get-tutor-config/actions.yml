@@ -1,0 +1,26 @@
+name: Get and set Tutor configuration
+description: 'Get Tutor configuration values and set them as environment variables'
+
+inputs:
+    STRAIN_PATH:
+        description: 'The path within the repository for strains'
+        required: true
+        type: string
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Python and dependencies
+      run: |
+        pip install pyyaml
+      shell: bash
+
+    - name: Get Tutor Configuration from config.yml and set it as an environment variable
+      working-directory: ${{ inputs.STRAIN_PATH }}
+      id: get-tutor-config
+      env:
+        REQUIRED_KEYS: '["TUTOR_VERSION", "TUTOR_APP_NAME"]'
+        OPTIONAL_KEYS: '["DOCKER_REGISTRY"]'
+      run: |
+        echo "$(python ./get_tutor_config.py --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)" >> $GITHUB_ENV
+      shell: bash
