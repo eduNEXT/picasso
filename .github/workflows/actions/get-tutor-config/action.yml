@@ -18,7 +18,8 @@ runs:
 
     - name: ls picasso folder
       run: |
-        ls picasso
+        ls -a picasso
+        ls -a picasso/.github
       shell: bash
 
     - name: Get Tutor Configuration from config.yml and set it as an environment variable
