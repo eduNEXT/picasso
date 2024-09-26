@@ -50,8 +50,13 @@ jobs:
 
     steps:
 
-      - name: Checkout current repository
+      - name: Checkout Picasso repository
         uses: actions/checkout@v4
+        with:
+          repository: edunext/picasso
+          ref: MJG/maintainable-scripts
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          path: picasso
 
       - name: Checkout strains repository
         uses: actions/checkout@v4
@@ -66,9 +71,7 @@ jobs:
           pip install git+https://github.com/eduNEXT/tvm.git
 
       - name: Get Tutor configuration values and set them as environment variables
-        uses: ./.github/workflows/actions/get-tutor-config
-        with:
-          STRAIN_PATH: ${{ inputs.STRAIN_PATH }}
+        uses: ./picasso/.github/workflows/actions/get-tutor-config
 
       - name: Configure TVM project
         shell: bash
