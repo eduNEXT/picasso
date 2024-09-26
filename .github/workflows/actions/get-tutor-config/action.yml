@@ -16,6 +16,11 @@ runs:
         pip install pyyaml
       shell: bash
 
+    - name: ls picasso folder
+      run: |
+        ls picasso
+      shell: bash
+
     - name: Get Tutor Configuration from config.yml and set it as an environment variable
       working-directory: ${{ inputs.STRAIN_PATH }}
       id: get-tutor-config
@@ -23,5 +28,5 @@ runs:
         REQUIRED_KEYS: TUTOR_VERSION TUTOR_APP_NAME
         OPTIONAL_KEYS: DOCKER_REGISTRY
       run: |
-        echo "$(python ./picasso/get_tutor_config.py --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)" >> $GITHUB_ENV
+        echo "$(python picasso/get_tutor_config.py --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)" >> $GITHUB_ENV
       shell: bash
