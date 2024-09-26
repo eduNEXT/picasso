@@ -71,7 +71,7 @@ jobs:
           pip install git+https://github.com/eduNEXT/tvm.git
 
       - name: Ls the repository
-        working-directory: picasso
+        working-directory: ./picasso
         run: ls -la
 
       - name: Get Tutor configuration values and set them as environment variables
