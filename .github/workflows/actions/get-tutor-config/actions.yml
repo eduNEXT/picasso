@@ -10,6 +10,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
+
     - name: Install Python and dependencies
       run: |
         pip install pyyaml

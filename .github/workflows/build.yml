@@ -49,6 +49,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+
       - name: Checkout strains repository
         uses: actions/checkout@v4
         with:
