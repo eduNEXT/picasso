@@ -58,6 +58,11 @@ jobs:
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           path: picasso
 
+      - name: Ls the repository
+        run: |
+          pwd
+          ls -la
+
       - name: Checkout strains repository
         uses: actions/checkout@v4
         with:
