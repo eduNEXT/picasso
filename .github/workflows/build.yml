@@ -57,6 +57,7 @@ jobs:
           ref: MJG/maintainable-scripts
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           path: picasso
+          submodules: true
 
       - name: Checkout strains repository
         uses: actions/checkout@v4
