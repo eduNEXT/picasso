@@ -24,5 +24,6 @@ runs:
         CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
       run: |
         ls strains/${{ inputs.STRAIN_PATH }}
+        echo ${{ inputs.STRAIN_PATH }}
         echo "$(python picasso/.github/workflows/actions/get-tutor-config/get_tutor_config.py --config-file $CONFIG_FILE --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)" >> $GITHUB_ENV
       shell: bash
