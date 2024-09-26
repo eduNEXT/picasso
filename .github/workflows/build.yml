@@ -111,7 +111,7 @@ jobs:
         run: |
           . .tvm/bin/activate
 
-          pip install git+https://github.com/eduNEXT/tutor-contrib-picasso@v0.1.0
+          pip install git+https://github.com/eduNEXT/tutor-contrib-picasso@v0.1.1
           tutor plugins enable picasso
 
       - name: Setup SSH agent for private repositories cloning
