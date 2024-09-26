@@ -23,11 +23,11 @@ runs:
       shell: bash
 
     - name: Get Tutor Configuration from config.yml and set it as an environment variable
-      working-directory: ${{ inputs.STRAIN_PATH }}
       id: get-tutor-config
       env:
         REQUIRED_KEYS: TUTOR_VERSION TUTOR_APP_NAME
         OPTIONAL_KEYS: DOCKER_REGISTRY
+        CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
       run: |
-        echo "$(python picasso/.github/workflows/actions/get-tutor-config/get_tutor_config.py --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)" >> $GITHUB_ENV
+        echo "$(python picasso/.github/workflows/actions/get-tutor-config/get_tutor_config.py --config-file $CONFIG_FILE --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)" >> $GITHUB_ENV
       shell: bash

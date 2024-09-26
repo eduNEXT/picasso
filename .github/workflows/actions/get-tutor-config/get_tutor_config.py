@@ -65,12 +65,16 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Process required and optional keys for config.")
 
     parser.add_argument(
+        '--config-file', default="config.yml",
+        help="The path to the configuration",
+    )
+    parser.add_argument(
         '--required-keys', nargs='+', default=["TUTOR_VERSION", "TUTOR_APP_NAME"],
-        help="List of required keys to look for in config.yml."
+        help="List of required keys to look for in config.yml.",
     )
     parser.add_argument(
         '--optional-keys', nargs='+', default=["DOCKER_REGISTRY"],
-        help="List of optional keys to look for in config.yml."
+        help="List of optional keys to look for in config.yml.",
     )
 
     return parser.parse_args()
