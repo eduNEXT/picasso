@@ -58,34 +58,25 @@ jobs:
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           path: picasso
 
-      - name: Ls the repository
-        run: |
-          pwd
-          ls -la
-
       - name: Checkout strains repository
         uses: actions/checkout@v4
         with:
           repository: ${{ inputs.STRAIN_REPOSITORY }}
           ref: ${{ inputs.STRAIN_REPOSITORY_BRANCH }}
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          path: strains
 
       - name: Install necessary dependencies
         run: |
           pip install pyyaml
           pip install git+https://github.com/eduNEXT/tvm.git
 
-      - name: Ls the repository
-        run: |
-          pwd
-          ls -la
-
       - name: Get Tutor configuration values and set them as environment variables
         uses: ./picasso/.github/workflows/actions/get-tutor-config
 
       - name: Configure TVM project
         shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}
+        working-directory: strains/${{ inputs.STRAIN_PATH }}
         run: |
           tvm install $TUTOR_VERSION
           tvm project init $TUTOR_APP_NAME $TUTOR_VERSION
@@ -96,7 +87,7 @@ jobs:
 
       - name: Enable and install picasso plugin in Tutor environment
         shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        working-directory: strains/${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         run: |
           . .tvm/bin/activate
 
@@ -115,7 +106,7 @@ jobs:
 
       - name: Execute extra commands
         shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        working-directory: strains/${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         run: |
           . .tvm/bin/activate
           tutor picasso run-extra-commands
@@ -150,7 +141,7 @@ jobs:
 
       - name: Build service image with no cache
         shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        working-directory: strains/${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         env:
           SERVICE: ${{ inputs.SERVICE }}
         run: |
@@ -159,7 +150,7 @@ jobs:
           tutor images build $SERVICE --no-cache
 
       - name: Push service image to registry
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        working-directory: strains/${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         env:
           SERVICE: ${{ inputs.SERVICE }}
         run: |
