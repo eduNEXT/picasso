@@ -23,12 +23,10 @@ runs:
         CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
         SCRIPT_PATH: picasso/.github/workflows/actions/get-tutor-config/get_tutor_config.py
       run: |
-        echo "::debug::Get Tutor configurations"
         env_vars=$(python $SCRIPT_PATH --config-file $CONFIG_FILE --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)
         if [ $? -ne 0 ]; then
           echo "::error::Failed to get Tutor configurations: $env_vars"
           exit 1
         fi
-        echo "::warning::Python script output: $env_vars"
         echo "$env_vars" >> $GITHUB_ENV
       shell: bash
