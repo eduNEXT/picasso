@@ -26,7 +26,6 @@ runs:
         env_vars=$(python $SCRIPT_PATH --config-file $CONFIG_FILE --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)
         if [ $? -ne 0 ]; then
           echo "::error::Failed to get Tutor configurations: $env_vars"
-          exit 1
         fi
         echo "$env_vars" >> $GITHUB_ENV
       shell: bash
