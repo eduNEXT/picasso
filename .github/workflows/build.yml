@@ -57,7 +57,6 @@ jobs:
           ref: MJG/maintainable-scripts
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           path: picasso
-          submodules: true
 
       - name: Checkout strains repository
         uses: actions/checkout@v4
@@ -69,11 +68,10 @@ jobs:
 
       - name: Install necessary dependencies
         run: |
-          pip install pyyaml
           pip install git+https://github.com/eduNEXT/tvm.git
 
       - name: Get Tutor configuration values and set them as environment variables
-        uses: ./picasso/.github/workflows/actions/get-tutor-config
+        uses: picasso/.github/workflows/actions/get-tutor-config
         with:
           STRAIN_PATH: ${{ inputs.STRAIN_PATH }}
 

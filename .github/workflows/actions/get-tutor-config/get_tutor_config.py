@@ -4,7 +4,11 @@ To use this script, you need to:
 
 1. Install the `pyyaml` package by running `pip install pyyaml`.
 2. Run the script within the same directory as the configuration file.
+3. Pass the required and optional keys as command-line arguments.
+4. The script will print the environment variables based on the keys.
+5. Set the environment variables in the GitHub Actions workflow.
 """
+
 import os
 import sys
 import yaml
@@ -60,24 +64,33 @@ def collect_env_vars(config, required_keys, optional_keys):
 
     return env_vars
 
+
 def parse_args():
     """Parse command-line arguments for required and optional keys."""
-    parser = argparse.ArgumentParser(description="Process required and optional keys for config.")
+    parser = argparse.ArgumentParser(
+        description="Process required and optional keys for config."
+    )
 
     parser.add_argument(
-        '--config-file', default="config.yml",
+        "--config-file",
+        default="config.yml",
         help="The path to the configuration",
     )
     parser.add_argument(
-        '--required-keys', nargs='+', default=["TUTOR_VERSION", "TUTOR_APP_NAME"],
+        "--required-keys",
+        nargs="+",
+        default=["TUTOR_VERSION", "TUTOR_APP_NAME"],
         help="List of required keys to look for in config.yml.",
     )
     parser.add_argument(
-        '--optional-keys', nargs='+', default=["DOCKER_REGISTRY"],
+        "--optional-keys",
+        nargs="+",
+        default=["DOCKER_REGISTRY"],
         help="List of optional keys to look for in config.yml.",
     )
 
     return parser.parse_args()
+
 
 def main(config_file="config.yml", required_keys=None, optional_keys=None):
     """Main function to load config, validate keys, and print environment variables.
@@ -95,6 +108,7 @@ def main(config_file="config.yml", required_keys=None, optional_keys=None):
     env_vars = collect_env_vars(tutor_config, required_keys, optional_keys)
 
     print("\n".join(env_vars))
+
 
 if __name__ == "__main__":
     main(**vars(parse_args()))
