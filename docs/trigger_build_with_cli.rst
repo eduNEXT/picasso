@@ -9,30 +9,30 @@ Consider you're using the Picasso Workflow like in the following snippet to buil
     on:
     workflow_dispatch:
         inputs:
-        STRAIN_REPOSITORY:
-            description: 'Repository to clone the configuration from'
-            default: 'eduNEXT/build-manifests'
-            type: string
-        STRAIN_REPOSITORY_BRANCH:
-            description: 'Branch to clone the configuration from'
-            default: 'master'
-            type: string
-        STRAIN_PATH:
-            description: 'Path to the configuration within the repository'
-            default: 'redwood/base'
-            type: string
-        SERVICE:
-            description: 'Service to build'
-            default: 'openedx'
-            type: choice
-            options:
-            - openedx
-            - mfe
-            - codejail
-            - aspects
-            - aspects-superset
-            - ecommerce
-            - discovery
+            STRAIN_REPOSITORY:
+                description: 'Repository to clone the configuration from'
+                default: 'eduNEXT/build-manifests'
+                type: string
+            STRAIN_REPOSITORY_BRANCH:
+                description: 'Branch to clone the configuration from'
+                default: 'master'
+                type: string
+            STRAIN_PATH:
+                description: 'Path to the configuration within the repository'
+                default: 'redwood/base'
+                type: string
+            SERVICE:
+                description: 'Service to build'
+                default: 'openedx'
+                type: choice
+                options:
+                - openedx
+                - mfe
+                - codejail
+                - aspects
+                - aspects-superset
+                - ecommerce
+                - discovery
 
     jobs:
     build:
