@@ -71,7 +71,7 @@ jobs:
           pip install git+https://github.com/eduNEXT/tvm.git
 
       - name: Get Tutor configuration values and set them as environment variables
-        uses: picasso/.github/workflows/actions/get-tutor-config
+        uses: ./picasso/.github/workflows/actions/get-tutor-config
         with:
           STRAIN_PATH: ${{ inputs.STRAIN_PATH }}
 
