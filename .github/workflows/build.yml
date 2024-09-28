@@ -54,7 +54,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: edunext/picasso
-          ref: MJG/maintainable-scripts
+          ref: MJG/scripts-folder
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           path: picasso
 
@@ -76,7 +76,7 @@ jobs:
           REQUIRED_KEYS: TUTOR_VERSION TUTOR_APP_NAME
           OPTIONAL_KEYS: DOCKER_REGISTRY
           CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
-          SCRIPT_PATH: picasso/.github/workflows/actions/get-tutor-config/get_tutor_config.py
+          SCRIPT_PATH: picasso/.github/workflows/scripts/get_tutor_config.py
         run: |
           env_vars=$(python $SCRIPT_PATH --config-file $CONFIG_FILE --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)
           echo "$env_vars" >> $GITHUB_ENV
