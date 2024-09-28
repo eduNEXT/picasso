@@ -1,14 +1,14 @@
 name: Get and set Tutor configuration
-description: 'Get Tutor configuration values and set them as environment variables'
+description: "Get Tutor configuration values and set them as environment variables"
 
 inputs:
     STRAIN_PATH:
-        description: 'The path within the repository for strains'
+        description: "The path within the repository for strains"
         required: true
         type: string
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
 
     - name: Install Python and dependencies
