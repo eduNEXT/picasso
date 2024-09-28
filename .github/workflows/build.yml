@@ -49,13 +49,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout Picasso repository
         uses: actions/checkout@v4
         with:
           repository: edunext/picasso
           ref: MJG/scripts-folder
-          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           path: picasso
 
       - name: Checkout strains repository
