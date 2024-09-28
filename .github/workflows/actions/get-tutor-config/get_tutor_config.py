@@ -25,8 +25,7 @@ def load_config(file_path):
         dict: The configuration data.
     """
     if not os.path.exists(file_path):
-        print("ERROR: file config.yml doesn't exist")
-        sys.exit(1)
+        sys.exit("ERROR: file config.yml doesn't exist")
 
     with open(file_path, "r", encoding="utf-8") as file:
         return yaml.safe_load(file)
@@ -41,8 +40,7 @@ def check_required_keys(config, required_keys):
     """
     for key in required_keys:
         if key not in config:
-            print(f"ERROR: key {key} not found in config.yml")
-            sys.exit(1)
+            sys.exit(f"ERROR: key {key} not found in config.yml")
 
 
 def collect_env_vars(config, required_keys, optional_keys):
