@@ -68,12 +68,19 @@ jobs:
 
       - name: Install necessary dependencies
         run: |
+          pip install pyyaml
           pip install git+https://github.com/eduNEXT/tvm.git
 
-      - name: Get Tutor configuration values and set them as environment variables
-        uses: ./picasso/.github/workflows/actions/get-tutor-config
-        with:
-          STRAIN_PATH: ${{ inputs.STRAIN_PATH }}
+      - name: Get Tutor Configurations from config.yml and set them as an environment variable
+        env:
+          REQUIRED_KEYS: TUTOR_VERSION TUTOR_APP_NAME
+          OPTIONAL_KEYS: DOCKER_REGISTRY
+          CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
+          SCRIPT_PATH: picasso/.github/workflows/actions/get-tutor-config/get_tutor_config.py
+        run: |
+          env_vars=$(python $SCRIPT_PATH --config-file $CONFIG_FILE --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)
+          echo "$env_vars" >> $GITHUB_ENV
+        shell: bash
 
       - name: Configure TVM project
         shell: bash
