@@ -49,54 +49,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      - name: Checkout Picasso repository
+        uses: actions/checkout@v4
+        with:
+          repository: edunext/picasso
+          ref: MJG/maintainable-scripts
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          path: picasso
+
       - name: Checkout strains repository
         uses: actions/checkout@v4
         with:
           repository: ${{ inputs.STRAIN_REPOSITORY }}
           ref: ${{ inputs.STRAIN_REPOSITORY_BRANCH }}
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          path: strains
 
       - name: Install necessary dependencies
         run: |
-          pip install pyyaml
           pip install git+https://github.com/eduNEXT/tvm.git
 
       - name: Get Tutor configuration values and set them as environment variables
-        shell: python
-        working-directory: ${{ inputs.STRAIN_PATH }}
-        run: |
-          import os
-          import sys
-          import yaml
-
-          file_path = os.path.join(os.getcwd(), "config.yml")
-          if not os.path.exists(file_path):
-            print("ERROR: file config.yml doesn't exist")
-            sys.exit(1)
-
-          with open(file_path, "r", encoding="utf-8") as file:
-            tutor_config = yaml.safe_load(file)
-
-          required_keys = ["TUTOR_VERSION", "TUTOR_APP_NAME"]
-          optional_keys = ["DOCKER_REGISTRY"]
-          env_vars = []
-
-          for key in required_keys:
-            if key not in tutor_config:
-              print(f"ERROR: key {key} not found in config.yml")
-              sys.exit(1)
-            env_vars.append(f"{key}={tutor_config[key]}")
-
-          for key in optional_keys:
-            if key in tutor_config:
-              env_vars.append(f"{key}={tutor_config[key]}")
-
-          with open(os.environ["GITHUB_ENV"], "a") as file:
-            file.write("\n".join(env_vars))
+        uses: ./picasso/.github/workflows/actions/get-tutor-config
+        with:
+          STRAIN_PATH: ${{ inputs.STRAIN_PATH }}
 
       - name: Configure TVM project
         shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}
+        working-directory: strains/${{ inputs.STRAIN_PATH }}
         run: |
           tvm install $TUTOR_VERSION
           tvm project init $TUTOR_APP_NAME $TUTOR_VERSION
@@ -107,7 +88,7 @@ jobs:
 
       - name: Enable and install picasso plugin in Tutor environment
         shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        working-directory: strains/${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         run: |
           . .tvm/bin/activate
 
@@ -126,7 +107,7 @@ jobs:
 
       - name: Execute extra commands
         shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        working-directory: strains/${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         run: |
           . .tvm/bin/activate
           tutor picasso run-extra-commands
@@ -161,7 +142,7 @@ jobs:
 
       - name: Build service image with no cache
         shell: bash
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        working-directory: strains/${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         env:
           SERVICE: ${{ inputs.SERVICE }}
         run: |
@@ -170,7 +151,7 @@ jobs:
           tutor images build $SERVICE --no-cache
 
       - name: Push service image to registry
-        working-directory: ${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
+        working-directory: strains/${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         env:
           SERVICE: ${{ inputs.SERVICE }}
         run: |
