@@ -1,5 +1,5 @@
-Configuring Docker Registries
-###################################
+Configure a Different Docker Registry
+#####################################
 
 In Tutor, you can configure docker registries by setting the variable ``DOCKER_REGISTRY`` in the ``config.yml`` file. This variable is used to specify the registry where the images will be pushed. By default, the images are pushed to the Docker Hub registry ``docker.io/``.
 

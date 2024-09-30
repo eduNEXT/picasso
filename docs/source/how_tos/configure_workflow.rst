@@ -1,7 +1,7 @@
-Picasso Workflow Configurations
-###################################
+Configure Picasso Workflow
+###########################
 
-Picasso is a `Github Workflow`_ implemented to be flexible enough to be adopted by different organizations with their own requirements. This document will guide you through the different configurations available to you.
+Picasso is a `Github Workflow`_ implemented to be flexible enough to be adopted by different organizations with their own requirements. This document will guide you through the different configurations available to you when using the Picasso workflow in your repository.
 
 .. _`Github Workflow`: https://docs.github.com/en/actions/sharing-automations/reusing-workflows
 

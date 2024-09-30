@@ -1,5 +1,5 @@
-Reusing the Picasso Workflow
-###################################
+Reuse Picasso Workflow in Your Repository
+##########################################
 
 This document will guide you through different ways of reusing the Picasso workflow in your own repository.
 

@@ -11,7 +11,5 @@ Here, you will find details on how to use and configure Picasso Workflow in your
     :maxdepth: 2
     :caption: Contents
 
-    quickstart
-    topic-guides/index
-    how-tos/index
-    tutorials/index
+    topic_guides/index
+    how_tos/index
