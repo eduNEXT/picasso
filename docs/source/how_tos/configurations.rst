@@ -18,11 +18,7 @@ Inputs are the parameters that you can set to customize the behavior of the Pica
 
 These inputs can be set in the workflow file that calls the Picasso workflow using the ``with`` keyword, by manually setting them in the workflow file, or by using the ``workflow_dispatch`` event. For more details on how to set input values in Github Actions, please refer to the `Workflow syntax for GitHub Actions`_ documentation.
 
-.. `Workflow syntax for GitHub Actions`: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
-
-These inputs can be set in the workflow file that calls the Picasso workflow using the ``with`` keyword, by manually setting them in the workflow file, or by using the ``workflow_dispatch`` event. For more details on how to set input values in Github Actions, please refer to the `Workflow syntax for GitHub Actions`_ documentation.
-
-.. `Workflow syntax for GitHub Actions`: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
+.. _`Workflow syntax for GitHub Actions`: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
 
 Here is an example of how to use the Picasso workflow with the inputs set:
 
@@ -56,10 +52,6 @@ Secrets are the sensitive data that you can set to customize the behavior of the
 These variables are mainly used to authenticate with some services like Docker Hub, AWS or GitHub. They should be set in the Github Actions repository's secrets settings. For more information on how to set secrets in Github, please refer to the `Using secrets in GitHub Actions`_ documentation.
 
 To correctly use Docker Hub or AWS registries to push images, you should set the corresponding configuration in your ``config.yml`` file. For more information on how to configure the Docker Hub or AWS registries in the ``config.yml`` file, please refer to the `Configuring Docker Registries <configuring_docker_registries>`_ documentation.
-
-.. _`Using secrets in GitHub Actions`: https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions
-
-These variables should be set in the Github Actions repository's secrets settings. For more information on how to set secrets in Github, please refer to the `Using secrets in GitHub Actions`_ documentation.
 
 .. _`Using secrets in GitHub Actions`: https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions
 

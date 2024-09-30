@@ -53,9 +53,7 @@ extra_navbar_content = """
 <hr/><br/>
 
 <a class='external' href='https://github.com/eduNEXT/picasso' target='_blank'>About the
-project in Github:</a><br/>
-
-
+project in Github</a><br/>
 """
 
 html_theme_options = {

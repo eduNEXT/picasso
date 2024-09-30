@@ -1,7 +1,7 @@
 Reusing the Picasso Workflow
 ###################################
 
-This document will guide you through different ways of reusing the Picasso workflow.
+This document will guide you through different ways of reusing the Picasso workflow in your own repository.
 
 To use a reusable workflow from your own repository, you can use the ``uses`` keyword in your workflow file. The ``uses`` keyword specifies the location of the reusable workflow file, which can be a specific tag, branch, or commit, either in the same repository or a different repository.
 
@@ -10,6 +10,9 @@ The (caller) workflow can access the reusable workflow file (callee) without res
 For more information, see `Reusing workflows`_.
 
 .. _`Reusing workflows`: https://docs.github.com/en/actions/sharing-automations/reusing-workflows
+
+Workflow Dispatch Event
+=======================
 
 Here is an example of how to use the Picasso workflow using the `workflow_dispatch`_ event:
 
@@ -60,6 +63,9 @@ Here is an example of how to use the Picasso workflow using the `workflow_dispat
                 SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
 In this example, you can trigger the workflow manually via the GitHub Actions tab, using the ``workflow_dispatch`` feature to input the necessary values. Based on the provided inputs, the workflow will then build the Open edX image.
+
+Push Event
+==========
 
 Here's an example of how to use the Picasso workflow using the `push`_ event:
 
