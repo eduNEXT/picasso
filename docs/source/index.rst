@@ -8,7 +8,6 @@ Here, you will find details on how to use and configure Picasso Workflow in your
 .. _tutor-contrib-picasso: https://github.com/eduNEXT/tutor-contrib-picasso/
 
 .. toctree::
-    :maxdepth: 2
     :caption: Contents
 
     topic_guides/index
