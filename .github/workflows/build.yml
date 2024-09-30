@@ -76,8 +76,8 @@ jobs:
           CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
           SCRIPT_PATH: picasso/.github/workflows/scripts/get_tutor_config.py
         run: |
-          env_vars=$(python $SCRIPT_PATH --config-file $CONFIG_FILE --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)
-          echo "$env_vars" >> $GITHUB_ENV
+          ENV_VARS=$(python $SCRIPT_PATH --config-file $CONFIG_FILE --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)
+          echo "$ENV_VARS" >> $GITHUB_ENV
         shell: bash
 
       - name: Configure TVM project
