@@ -3,10 +3,16 @@
 To use this script, you need to:
 
 1. Install the `pyyaml` package by running `pip install pyyaml`.
-2. Run the script within the same directory as the configuration file.
+2. Run the script from the root of the repository or from where it can find the `config.yml` file.
 3. Pass the required and optional keys as command-line arguments.
 4. The script will print the environment variables based on the keys.
 5. Set the environment variables in the GitHub Actions workflow.
+
+You can run the script using the following command:
+
+python ./scripts/get_tutor_config.py --config-file config.yml --required-keys TUTOR_VERSION TUTOR_APP_NAME --optional-keys DOCKER_REGISTRY
+
+See the `parse_args` function for more details on the command-line arguments. Find a usage example in the `.github/workflows/build.yml` file.
 """
 
 import os
