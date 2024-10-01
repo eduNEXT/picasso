@@ -49,14 +49,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Picasso repository
+      - name: Checkout Picasso repository for utility scripts
         uses: actions/checkout@v4
         with:
           repository: edunext/picasso
           ref: main
           path: picasso
 
-      - name: Checkout strains repository
+      - name: Checkout strains repository for build configurations
         uses: actions/checkout@v4
         with:
           repository: ${{ inputs.STRAIN_REPOSITORY }}
