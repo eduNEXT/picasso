@@ -53,7 +53,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: edunext/picasso
-          ref: MJG/scripts-folder
+          ref: main
           path: picasso
 
       - name: Checkout strains repository
