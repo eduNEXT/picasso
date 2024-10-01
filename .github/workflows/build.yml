@@ -78,7 +78,7 @@ jobs:
       - name: Get Tutor Configurations from config.yml and set them as an environment variable
         working-directory: ${{ github.workspace }}
         env:
-          REQUIRED_KEYS: TUTOR_VERSION TUTOR_APP_NAME
+          REQUIRED_KEYS: TUTOR_VERSION
           OPTIONAL_KEYS: DOCKER_REGISTRY
           CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
           SCRIPT_PATH: picasso/.github/workflows/scripts/get_tutor_config.py
