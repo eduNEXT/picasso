@@ -47,6 +47,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - name: Checkout Picasso repository for utility scripts
@@ -78,10 +81,8 @@ jobs:
         run: |
           ENV_VARS=$(python $SCRIPT_PATH --config-file $CONFIG_FILE --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)
           echo "$ENV_VARS" >> $GITHUB_ENV
-        shell: bash
 
       - name: Configure TVM project
-        shell: bash
         working-directory: strains/${{ inputs.STRAIN_PATH }}
         run: |
           tvm install $TUTOR_VERSION
@@ -92,7 +93,6 @@ jobs:
           cp -r $(ls --ignore=$TUTOR_APP_NAME) $TUTOR_APP_NAME/
 
       - name: Enable and install picasso plugin in Tutor environment
-        shell: bash
         working-directory: strains/${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         run: |
           . .tvm/bin/activate
@@ -106,12 +106,10 @@ jobs:
             ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Add GitHub to known hosts
-        shell: bash
         run: |
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Execute extra commands
-        shell: bash
         working-directory: strains/${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         run: |
           . .tvm/bin/activate
@@ -119,7 +117,6 @@ jobs:
 
       - name: Limit build parallelism to decrease resource usage
         if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}
-        shell: bash
         run: |
           echo "[worker.oci]
           max-parallelism = 3" > buildkit.toml
@@ -146,7 +143,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Build service image with no cache
-        shell: bash
         working-directory: strains/${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         env:
           SERVICE: ${{ inputs.SERVICE }}
