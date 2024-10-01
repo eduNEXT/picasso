@@ -52,8 +52,8 @@ jobs:
         shell: bash
         working-directory: strains/${{ inputs.STRAIN_PATH }}
     env:
-      TUTOR_ROOT: strains/${{ inputs.STRAIN_PATH }}
-      TUTOR_PLUGINS_ROOT: strains/${{ inputs.STRAIN_PATH }}/plugins
+      TUTOR_ROOT: ${{ github.workspace }}/strains/${{ inputs.STRAIN_PATH }}
+      TUTOR_PLUGINS_ROOT: ${{ github.workspace }}/strains/${{ inputs.STRAIN_PATH }}/plugins
 
     steps:
       - name: Checkout Picasso repository for utility scripts
