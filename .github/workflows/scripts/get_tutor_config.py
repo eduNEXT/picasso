@@ -15,7 +15,7 @@ import yaml
 import argparse
 
 
-def load_config(file_path):
+def load_config(file_path: str) -> dict:
     """Loads the YAML configuration from the specified file.
 
     Args:
@@ -31,7 +31,7 @@ def load_config(file_path):
         return yaml.safe_load(file)
 
 
-def check_required_keys(config, required_keys):
+def check_required_keys(config: dict, required_keys: list):
     """Checks if the required keys are present in the config.
 
     Args:
@@ -43,7 +43,7 @@ def check_required_keys(config, required_keys):
             sys.exit(f"ERROR: key {key} not found in config.yml")
 
 
-def collect_env_vars(config, required_keys, optional_keys):
+def collect_env_vars(config: dict, required_keys: list, optional_keys: list) -> list:
     """Collects the environment variables from the config.
 
     Args:
