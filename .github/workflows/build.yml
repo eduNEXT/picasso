@@ -88,7 +88,7 @@ jobs:
 
       - name: Install Tutor and its dependencies from the version specified in the config.yml
         run: |
-          pip install tutor[full]==$TUTOR_VERSION
+          pip install git+https://github.com/overhangio/tutor.git@$TUTOR_VERSION
           tutor config save
 
       - name: Enable and install picasso plugin in Tutor environment
