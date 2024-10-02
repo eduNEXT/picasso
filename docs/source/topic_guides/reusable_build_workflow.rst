@@ -1,7 +1,7 @@
 Reusable Build Workflow (Picasso)
 ##################################
 
-The Picasso Workflow is a `reusable GitHub Actions workflow`_` designed to build Open edX Docker images for Tutor environments. It simplifies the process of building custom Open edX images with additional functionality, making it easier to maintain, extend, and deploy environments using modern CI/CD practices.
+The Picasso Workflow is a `reusable GitHub Actions workflow`_ designed to build Open edX Docker images for Tutor environments. It simplifies the process of building custom Open edX images with additional functionality, making it easier to maintain, extend, and deploy environments using modern CI/CD practices.
 
 Purpose
 =======
