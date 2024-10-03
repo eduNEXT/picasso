@@ -21,7 +21,6 @@ project = 'Picasso Workflow'
 copyright = '2024, edunext'
 author = 'edunext'
 
-
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
