@@ -50,6 +50,10 @@ jobs:
     defaults:
       run:
         shell: bash
+        working-directory: strains/${{ inputs.STRAIN_PATH }}
+    env:
+      TUTOR_ROOT: ${{ github.workspace }}/strains/${{ inputs.STRAIN_PATH }}
+      TUTOR_PLUGINS_ROOT: ${{ github.workspace }}/strains/${{ inputs.STRAIN_PATH }}/plugins
 
     steps:
       - name: Checkout Picasso repository for utility scripts
@@ -70,11 +74,11 @@ jobs:
       - name: Install necessary dependencies
         run: |
           pip install pyyaml
-          pip install git+https://github.com/eduNEXT/tvm.git
 
       - name: Get Tutor Configurations from config.yml and set them as an environment variable
+        working-directory: ${{ github.workspace }}
         env:
-          REQUIRED_KEYS: TUTOR_VERSION TUTOR_APP_NAME
+          REQUIRED_KEYS: TUTOR_VERSION
           OPTIONAL_KEYS: DOCKER_REGISTRY
           CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
           SCRIPT_PATH: picasso/.github/workflows/scripts/get_tutor_config.py
@@ -82,21 +86,13 @@ jobs:
           ENV_VARS=$(python $SCRIPT_PATH --config-file $CONFIG_FILE --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)
           echo "$ENV_VARS" >> $GITHUB_ENV
 
-      - name: Configure TVM project
-        working-directory: strains/${{ inputs.STRAIN_PATH }}
+      - name: Install Tutor and its dependencies from the version specified in the config.yml
         run: |
-          tvm install $TUTOR_VERSION
-          tvm project init $TUTOR_APP_NAME $TUTOR_VERSION
-
-          # This command copies all the files and folders
-          # from the repository STRAIN_PATH to the recently above created TVM PROJECT folder
-          cp -r $(ls --ignore=$TUTOR_APP_NAME) $TUTOR_APP_NAME/
+          pip install git+https://github.com/overhangio/tutor.git@$TUTOR_VERSION
+          tutor config save
 
       - name: Enable and install picasso plugin in Tutor environment
-        working-directory: strains/${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         run: |
-          . .tvm/bin/activate
-
           pip install git+https://github.com/eduNEXT/tutor-contrib-picasso@v0.1.1
           tutor plugins enable picasso
 
@@ -110,9 +106,7 @@ jobs:
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Execute extra commands
-        working-directory: strains/${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         run: |
-          . .tvm/bin/activate
           tutor picasso run-extra-commands
 
       - name: Limit build parallelism to decrease resource usage
@@ -143,18 +137,14 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Build service image with no cache
-        working-directory: strains/${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         env:
           SERVICE: ${{ inputs.SERVICE }}
         run: |
-          . .tvm/bin/activate
           tutor config save
           tutor images build $SERVICE --no-cache
 
       - name: Push service image to registry
-        working-directory: strains/${{ inputs.STRAIN_PATH }}/${{ env.TUTOR_APP_NAME }}
         env:
           SERVICE: ${{ inputs.SERVICE }}
         run: |
-          . .tvm/bin/activate
           tutor images push $SERVICE
