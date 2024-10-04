@@ -139,9 +139,17 @@ jobs:
       - name: Build service image with no cache
         env:
           SERVICE: ${{ inputs.SERVICE }}
+          LOGS_FILE_PATH: /tmp/build_logs.out
         run: |
           tutor config save
-          tutor images build $SERVICE --no-cache
+          (tutor images build $SERVICE --no-cache 2>&1) | tee $LOGS_FILE_PATH
+      
+      - name: Scan build logs for potential errors in the image
+        env:
+          SCRIPT_PATH: picasso/.github/workflows/scripts/identify_silent_errors.py
+          LOGS_FILE_PATH: /tmp/build_logs.out
+        run: |
+          python $SCRIPT_PATH $LOGS_FILE_PATH
 
       - name: Push service image to registry
         env:
