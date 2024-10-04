@@ -8,10 +8,6 @@ The cases that trigger errors are:
 1. Theme not found: This error is triggered when the PICASSO_THEMES 
 variable is not defined and the theme folder is not cloned.
 
-2. ERROR: Repository not found: This error occurs when tries to clone
- a private Django plugin.
-
-
 To use this script, you need to:
 
 1. Pass the required command-line arguments (file_path).
@@ -28,6 +24,7 @@ See the `parse_args` function for more details on the command-line arguments. Fi
 import re
 import sys
 import argparse
+from typing import TextIO
 
 # List of messages indicating critical errors
 ERROR_MESSAGE_PATTERNS = [
@@ -44,7 +41,7 @@ WARNING_MESSAGE_PATTERNS = [
 ]
 
 
-def parse_error(build_logs):
+def parse_error(build_logs: TextIO):
     """
     Search for errors that does not stop the build process but
     result in an unusable image.
