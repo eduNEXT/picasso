@@ -1,7 +1,16 @@
-"""This script scans the build log for errors and warnings.
+"""
+The script is responsible for scanning build logs to detect potential errors
+and warnings that may otherwise go unnoticed (silent errors). It stops the 
+build process when a critical error is found.
 
-Warnings will be highlighted, but errors will a not-zero exit code
-to signal failure in the build process and stops the workflow. 
+The cases that trigger errors are:
+
+1. Theme not found: This error is triggered when the PICASSO_THEMES 
+variable is not defined and the theme folder is not cloned.
+
+2. ERROR: Repository not found: This error occurs when tries to clone
+ a private Django plugin.
+
 
 To use this script, you need to:
 
@@ -20,16 +29,16 @@ import re
 import sys
 import argparse
 
-# List of keywords indicating critical errors
-error_list = [
+# List of messages indicating critical errors
+ERROR_MESSAGE_PATTERNS = [
     "^Error",
     "ValueError",
     "Theme not found",
     "ERROR: Repository not found",
 ]
 
-# List of keywords indicating warnings
-warning_list = [
+# List of messages indicating warnings
+WARNING_MESSAGE_PATTERNS = [
     "fatal: not a git repository (or any of the parent directories): .git",
     "Error: No such command 'init'",
 ]
@@ -44,11 +53,11 @@ def parse_error(build_logs):
         build_logs (file object): The build log file to scan.
     """
     for line_number, line in enumerate(build_logs, 1):
-        if any(re.search(keyword, line) for keyword in warning_list):
+        if any(re.search(message, line) for message in WARNING_MESSAGE_PATTERNS):
             print("\033[33m", f"Warning at line {line_number}: {line}")
             continue
 
-        if any(re.search(keyword, line) for keyword in error_list):
+        if any(re.search(message, line) for message in ERROR_MESSAGE_PATTERNS):
             sys.exit(
                 f"\033[31m Error detected in build process at line {line_number}: {line}"
             )
