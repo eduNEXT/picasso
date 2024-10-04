@@ -1,5 +1,5 @@
-Configuring Docker Registries
-###################################
+Configure a Different Docker Registry
+#####################################
 
 In Tutor, you can configure docker registries by setting the variable ``DOCKER_REGISTRY`` in the ``config.yml`` file. This variable is used to specify the registry where the images will be pushed. By default, the images are pushed to the Docker Hub registry ``docker.io/``.
 
@@ -9,7 +9,10 @@ To allow further customization in the build process, Picasso Workflow also suppo
 2. Setting the corresponding secrets in the Github Actions repository's secrets settings. If you're using Docker Hub, you should set the ``DOCKERHUB_USERNAME`` and ``DOCKERHUB_PASSWORD`` secrets. If you're using AWS ECR, you should set the ``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``, and ``AWS_REGION`` secrets.
 3. Using the Picasso Workflow with the inputs and secrets set.
 
-Here is an example of how to configure the Docker registries in the ``config.yml`` file:
+AWS ECR registry
+================
+
+Here is an example of how to configure the Docker registries in the ``config.yml`` file to use the AWS ECR registry:
 
 .. code-block:: yaml
 
