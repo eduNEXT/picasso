@@ -83,6 +83,7 @@ jobs:
           echo PATH=$PATH >> $GITHUB_ENV
 
       - name: Install necessary requirements for workflow scripts
+        working-directory: ${{ github.workspace }}
         run: |
           pip install -r picasso/requirements/base.txt
 
