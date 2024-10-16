@@ -1,5 +1,5 @@
 .PHONY: clean help \
-	requirements selfcheck upgrade docs
+	requirements selfcheck upgrade docs serve_docs
 
 .DEFAULT_GOAL := help
 
@@ -25,6 +25,9 @@ requirements: ## install development environment requirements
 
 docs: ## build the documentation
 	cd docs && $(MAKE) html
+
+serve_docs: ## serve the built docs locally to preview the site in the browser
+	cd docs && $(MAKE) serve_docs
 
 selfcheck: ## check that the Makefile is well-formed
 	@echo "The Makefile is well-formed."
