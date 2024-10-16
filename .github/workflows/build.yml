@@ -162,7 +162,6 @@ jobs:
           (echo "Building $SERVICE image") 2>&1 | tee $LOGS_FILE_PATH
 
       - name: Scan build logs for potential errors in the image
-        working-directory: ${{ github.workspace }}
         env:
           SCRIPT_PATH: picasso/.github/workflows/scripts/identify_silent_errors.py
           LOGS_FILE_PATH: /tmp/build_logs.out
