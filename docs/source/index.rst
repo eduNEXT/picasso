@@ -7,10 +7,8 @@ Here, you will find details on how to use and configure Picasso Workflow in your
 
 .. _tutor-contrib-picasso: https://github.com/eduNEXT/tutor-contrib-picasso/
 
-Contents
-********
+.. toctree::
+    :caption: Contents
 
-- `Configurations <configurations.rst>`_
-- `Workflow Usage <reuse_workflow.rst>`_
-- `Configuring Docker Registries <configuring_docker_registries.rst>`_
-- `Triggering a Build with the GitHub cli <trigger_build_with_cli.rst>`_
+    topic_guides/index
+    how_tos/index

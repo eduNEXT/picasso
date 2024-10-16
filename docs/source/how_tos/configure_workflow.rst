@@ -1,7 +1,7 @@
-Picasso Workflow Configurations
-###################################
+Configure Picasso Workflow
+###########################
 
-Picasso is a `Github Workflow`_ implemented to be flexible enough to be adopted by different organizations with their own requirements. This document will guide you through the different configurations available to you.
+Picasso is a `Github Workflow`_ implemented to be flexible enough to be adopted by different organizations with their own requirements. This document will guide you through the different configurations available to you when using the Picasso workflow in your repository.
 
 .. _`Github Workflow`: https://docs.github.com/en/actions/sharing-automations/reusing-workflows
 
@@ -18,7 +18,7 @@ Inputs are the parameters that you can set to customize the behavior of the Pica
 
 These inputs can be set in the workflow file that calls the Picasso workflow using the ``with`` keyword, by manually setting them in the workflow file, or by using the ``workflow_dispatch`` event. For more details on how to set input values in Github Actions, please refer to the `Workflow syntax for GitHub Actions`_ documentation.
 
-.. `Workflow syntax for GitHub Actions`: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
+.. _`Workflow syntax for GitHub Actions`: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
 
 Here is an example of how to use the Picasso workflow with the inputs set:
 

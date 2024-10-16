@@ -1,5 +1,5 @@
-Trigger a build with the GitHub CLI
-####################################
+Trigger a New Build with the GitHub CLI
+########################################
 
 Consider you're using the Picasso Workflow like in the following snippet to build Open edX images:
 
