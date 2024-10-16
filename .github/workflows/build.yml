@@ -76,9 +76,15 @@ jobs:
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           path: strains
 
-      - name: Install necessary dependencies
+      - name: Setup Virtual Environment
         run: |
-          pip install pyyaml
+          python -m venv venv
+          . venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
+
+      - name: Install necessary requirements for workflow scripts
+        run: |
+          pip install -r picasso/requirements/base.txt
 
       - name: Get Tutor Configurations from config.yml and set them as an environment variable
         working-directory: ${{ github.workspace }}
