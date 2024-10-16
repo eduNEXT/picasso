@@ -28,7 +28,7 @@ on:
         description: 'The label of the runner workflow to run'
         required: false
         type: string
-        default: 'ubuntu-latest'
+        default: 'ubuntu-24.04'
     secrets:
       DOCKERHUB_USERNAME:
         description: 'DockerHub username for login'
