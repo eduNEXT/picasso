@@ -76,16 +76,16 @@ jobs:
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           path: strains
 
-      # - name: Setup Python
-      #   uses: actions/setup-python@v2
-      #   with:
-      #     python-version: 3.11
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
 
-      # - name: Setup Virtual Environment
-      #   run: |
-      #     python -m venv venv
-      #     . venv/bin/activate
-      #     echo PATH=$PATH >> $GITHUB_ENV
+      - name: Setup Virtual Environment
+        run: |
+          python -m venv venv
+          . venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
 
       - name: Install necessary requirements for workflow scripts
         working-directory: ${{ github.workspace }}
