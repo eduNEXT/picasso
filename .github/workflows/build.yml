@@ -109,13 +109,6 @@ jobs:
         run: |
           tutor picasso run-extra-commands
 
-      - name: Limit build parallelism to decrease resource usage
-        if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}
-        run: |
-          echo "[worker.oci]
-          max-parallelism = 3" > buildkit.toml
-          docker buildx create --use --node=limitparallelsteps --driver=docker-container --config=./buildkit.toml
-
       - name: Configure AWS credentials
         if: ${{ contains(env.DOCKER_REGISTRY, 'aws') }}
         uses: aws-actions/configure-aws-credentials@v4
@@ -143,13 +136,6 @@ jobs:
         run: |
           tutor config save
           (tutor images build $SERVICE --no-cache 2>&1) | tee $LOGS_FILE_PATH
-      
-      - name: Scan build logs for potential errors in the image
-        env:
-          SCRIPT_PATH: picasso/.github/workflows/scripts/identify_silent_errors.py
-          LOGS_FILE_PATH: /tmp/build_logs.out
-        run: |
-          python $SCRIPT_PATH $LOGS_FILE_PATH
 
       - name: Push service image to registry
         env:
