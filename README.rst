@@ -123,9 +123,11 @@ If you encounter any issues with the workflow or need further assistance, please
 
 - `GitHub Actions documentation`_ for troubleshooting steps.
 - You can also open an issue in the `Picasso Workflow repository`_.
+- For more information on the workflow, refer to the `documentation on Read the Docs`_.
 
 .. _GitHub Actions documentation: https://docs.github.com/en/actions
 .. _Picasso Workflow repository: https://github.com/edunext/picasso/issues
+.. _documentation on Read the Docs: https://picasso.docs.edunext.co/en/latest/
 
 Contributing
 ************
