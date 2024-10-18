@@ -47,6 +47,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     defaults:
       run:
         shell: bash
@@ -129,6 +130,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Limit build parallelism to decrease resource usage
+        if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}
+        run: |
+          echo "[worker.oci]
+          max-parallelism = 3" > buildkit.toml
+          docker buildx create --use --node=limitparallelsteps --driver=docker-container --config=./buildkit.toml
+
       - name: Build service image with no cache
         env:
           SERVICE: ${{ inputs.SERVICE }}
@@ -136,6 +144,13 @@ jobs:
         run: |
           tutor config save
           (tutor images build $SERVICE --no-cache 2>&1) | tee $LOGS_FILE_PATH
+
+      - name: Upload artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-logs
+          path: /tmp/build_logs.out
 
       - name: Push service image to registry
         env:
