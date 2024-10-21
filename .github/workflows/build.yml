@@ -130,12 +130,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      # - name: Limit build parallelism to decrease resource usage
-      #   if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}
-      #   run: |
-      #     echo "[worker.oci]
-      #     max-parallelism = 3" > buildkit.toml
-      #     docker buildx create --use --node=limitparallelsteps --driver=docker-container --config=./buildkit.toml
+      - name: Limit build parallelism to decrease resource usage
+        if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}
+        run: |
+          echo "[worker.oci]
+          max-parallelism = 3" > buildkit.toml
+          docker buildx create --use --node=limitparallelsteps --driver=docker-container --config=./buildkit.toml
 
       - name: Build service image with no cache
         env:
