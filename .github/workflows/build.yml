@@ -143,14 +143,7 @@ jobs:
           LOGS_FILE_PATH: /tmp/build_logs.out
         run: |
           tutor config save
-          (tutor images build $SERVICE --no-cache 2>&1) | tee $LOGS_FILE_PATH
-
-      - name: Upload artifacts
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-logs
-          path: /tmp/build_logs.out
+          tutor images build $SERVICE --no-cache
 
       - name: Push service image to registry
         env:
