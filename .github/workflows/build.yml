@@ -71,6 +71,14 @@ jobs:
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           path: strains
 
+      - name: Validate GitHub repository URLs in configuration
+        run: |
+          python picasso/.github/workflows/scripts/validate_repos.py strains/${{ inputs.STRAIN_PATH }}/strain.yml
+
+      - name: Validate YAML configuration syntax
+        run: |
+          python picasso/.github/workflows/scripts/validate_yaml_syntax.py strains/${{ inputs.STRAIN_PATH }}/strain.yml
+
       - name: Install necessary dependencies
         run: |
           pip install pyyaml
