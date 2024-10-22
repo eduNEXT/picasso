@@ -134,13 +134,20 @@ Contributing
 
 Contributions are welcome and strongly encouraged! Please, open an issue or submit a pull request to suggest changes or improvements to the workflow.
 
+License
+********
+
+This project is licensed under the `AGPL-3.0 License`_. . Please note that no support or maintenance is guaranteed for public users. Any updates, bug fixes, or improvements will be made based on internal priorities, and contributions from the community may not receive immediate attention.
+
+.. _AGPL-3.0 License: https://github.com/edunext/picasso/blob/main/LICENSE
+
 Reporting Security Issues
 *************************
 
 Please do not report security vulnerabilities in public forums. Instead, email technical@edunext.co.
 
 .. |license-badge| image:: https://img.shields.io/github/license/edunext/picasso.svg
-    :target: https://github.com/edunext/picasso/blob/main/LICENSE.txt
+    :target: https://github.com/edunext/picasso/blob/main/LICENSE
     :alt: License
 
 .. |status-badge| image:: http://badges.github.io/stability-badges/dist/Status-Maintained-brightgreen.svg
