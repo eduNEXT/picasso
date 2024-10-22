@@ -81,12 +81,6 @@ jobs:
         with:
           python-version: 3.11
 
-      - name: Setup Virtual Environment
-        run: |
-          python -m venv venv
-          . venv/bin/activate
-          echo PATH=$PATH >> $GITHUB_ENV
-
       - name: Install necessary requirements for workflow scripts
         working-directory: ${{ github.workspace }}
         run: |
