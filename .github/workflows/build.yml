@@ -29,6 +29,11 @@ on:
         required: false
         type: string
         default: 'ubuntu-24.04'
+      PYTHON_VERSION:
+        description: 'Python version to use for the workflow'
+        required: false
+        type: string
+        default: '3.12'
     secrets:
       DOCKERHUB_USERNAME:
         description: 'DockerHub username for login'
@@ -79,7 +84,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: ${{ inputs.PYTHON_VERSION }}
 
       - name: Install necessary requirements for workflow scripts
         working-directory: ${{ github.workspace }}
