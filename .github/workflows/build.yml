@@ -24,6 +24,11 @@ on:
         required: false
         type: boolean
         default: true
+      RUNNER_WORKFLOW_LABEL:
+        description: 'The label of the runner workflow to run'
+        required: false
+        type: string
+        default: 'ubuntu-latest'
     secrets:
       DOCKERHUB_USERNAME:
         description: 'DockerHub username for login'
@@ -46,7 +51,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.RUNNER_WORKFLOW_LABEL }}
     defaults:
       run:
         shell: bash
