@@ -54,13 +54,14 @@ jobs:
     env:
       TUTOR_ROOT: ${{ github.workspace }}/strains/${{ inputs.STRAIN_PATH }}
       TUTOR_PLUGINS_ROOT: ${{ github.workspace }}/strains/${{ inputs.STRAIN_PATH }}/plugins
+      CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
 
     steps:
       - name: Checkout Picasso repository for utility scripts
         uses: actions/checkout@v4
         with:
           repository: edunext/picasso
-          ref: main
+          ref: mjh/repo-and-syntx-analysis
           path: picasso
 
       - name: Checkout strains repository for build configurations
@@ -73,14 +74,21 @@ jobs:
 
       - name: Install necessary dependencies
         run: |
-          pip install pyyaml
+          pip install pyyaml schema
+
+      - name: Validate strain configuration
+        working-directory: ${{ github.workspace }}
+        env:
+          STRAIN_VALIDATION_SCRIPTS_PATH: picasso/.github/workflows/scripts/strain_validation
+        run: |
+          python $STRAIN_VALIDATION_SCRIPTS_PATH/validate_schema.py $CONFIG_FILE
+          python $STRAIN_VALIDATION_SCRIPTS_PATH/validate_repos.py $CONFIG_FILE
 
       - name: Get Tutor Configurations from config.yml and set them as an environment variable
         working-directory: ${{ github.workspace }}
         env:
           REQUIRED_KEYS: TUTOR_VERSION
           OPTIONAL_KEYS: DOCKER_REGISTRY
-          CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
           SCRIPT_PATH: picasso/.github/workflows/scripts/get_tutor_config.py
         run: |
           ENV_VARS=$(python $SCRIPT_PATH --config-file $CONFIG_FILE --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)
