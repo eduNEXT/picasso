@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import argparse
 import logging
-import re
 from collections.abc import Sequence
 from io import TextIOWrapper
 from typing import Any, Dict
