@@ -89,7 +89,7 @@ jobs:
       - name: Install necessary requirements for workflow scripts
         working-directory: ${{ github.workspace }}
         run: |
-          ls picasso
+          ls picasso/requirements
           pip install -r picasso/requirements/base.txt
 
       - name: Get Tutor Configurations from config.yml and set them as an environment variable
