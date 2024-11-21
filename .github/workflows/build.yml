@@ -70,7 +70,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: edunext/picasso
-          ref: v1
+          ref: sumac
           path: picasso
 
       - name: Checkout strains repository for build configurations
