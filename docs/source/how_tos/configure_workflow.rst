@@ -15,7 +15,7 @@ Inputs are the parameters that you can set to customize the behavior of the Pica
 * ``STRAIN_PATH (required)``: The path to the directory that contains the strain configuration file. This path should be relative to the root of the repository.
 * ``SERVICE (required)``: The name of the service that will be built. This service should be supported by Tutor or by a tutor plugin previously installed.
 * ``ENABLE_LIMIT_BUILDKIT_PARALLELISM (optional)``: If set to ``true``, the build process parallel steps will be limited by 3, which is the threshold found where both Open edX and MFE images are built without running out of resources in the Github Actions runner (please, see `PR #12`_ for more details) . If set to ``false``, the buildkit configuration default will be used. Default is ``true``. Set to ``false`` if you have a runner with more resources.
-* ``RUNNER_WORKFLOW_LABEL (optional)``: This label should match the label of the runner that will execute the workflow. By default, the workflow will use the `Github Actions standard runners`_.
+* ``RUNNER_WORKFLOW_LABEL (optional)``: This label should match the label of the runner that will execute the workflow. By default, the workflow will use one of the `Github Actions standard runners`_, e.g., ``ubuntu-24.04``.
 * ``PYTHON_VERSION (optional)``: The Python version to use in the workflow. By default, the workflow will use Python 3.12.
 * ``PICASSO_VERSION (optional)``: Picasso version to use for the workflow scripts and utility functions. This should be a valid branch, tag or commit and it should match the version of the workflow used. By default, the workflow will use the latest release major version, e.g., ``v1``.
 
@@ -99,3 +99,5 @@ Or using an AWS registry:
                 AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
                 AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                 AWS_REGION: ${{ secrets.AWS_REGION }}
+
+.. _`Github Actions standard runners`: https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories
