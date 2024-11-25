@@ -88,6 +88,18 @@ Before using the workflow, ensure that you have set up the following configurati
      - Enables limiting parallelism with buildkit to decrease resource consumption for those setups with low-powered machines. Default is ``true``.
      - boolean
      - Input
+   * - RUNNER_WORKFLOW_LABEL (Optional)
+     - The label of the runner workflow to use. Default is ``ubuntu-24.04``.
+     - string
+     - Input
+   * - PYTHON_VERSION (Optional)
+     - The Python version to use in the workflow. Default is ``3.12``.
+     - string
+     - Input
+   * - PICASSO_VERSION (Optional)
+     - Picasso version to use for the workflow scripts and utility functions. This should be a valid branch, tag or commit and it should match the version of the workflow used. Default is the latest release major version, e.g., ``v1``.
+     - string
+     - Input
 
 Usage
 *****

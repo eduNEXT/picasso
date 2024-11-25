@@ -15,6 +15,9 @@ Inputs are the parameters that you can set to customize the behavior of the Pica
 * ``STRAIN_PATH (required)``: The path to the directory that contains the strain configuration file. This path should be relative to the root of the repository.
 * ``SERVICE (required)``: The name of the service that will be built. This service should be supported by Tutor or by a tutor plugin previously installed.
 * ``ENABLE_LIMIT_BUILDKIT_PARALLELISM (optional)``: If set to ``true``, the build process parallel steps will be limited by 3, which is the threshold found where both Open edX and MFE images are built without running out of resources in the Github Actions runner (please, see `PR #12`_ for more details) . If set to ``false``, the buildkit configuration default will be used. Default is ``true``. Set to ``false`` if you have a runner with more resources.
+* ``RUNNER_WORKFLOW_LABEL (optional)``: This label should match the label of the runner that will execute the workflow. By default, the workflow will use the `Github Actions standard runners`_.
+* ``PYTHON_VERSION (optional)``: The Python version to use in the workflow. By default, the workflow will use Python 3.12.
+* ``PICASSO_VERSION (optional)``: Picasso version to use for the workflow scripts and utility functions. This should be a valid branch, tag or commit and it should match the version of the workflow used. By default, the workflow will use the latest release major version, e.g., ``v1``.
 
 These inputs can be set in the workflow file that calls the Picasso workflow using the ``with`` keyword, by manually setting them in the workflow file, or by using the ``workflow_dispatch`` event. For more details on how to set input values in Github Actions, please refer to the `Workflow syntax for GitHub Actions`_ documentation.
 
@@ -34,6 +37,9 @@ Here is an example of how to use the Picasso workflow with the inputs set:
                 STRAIN_PATH: redwood/base
                 SERVICE: mfe
                 ENABLE_LIMIT_BUILDKIT_PARALLELISM: false
+                RUNNER_WORKFLOW_LABEL: ubuntu-latest
+                PYTHON_VERSION: 3.10
+                PICASSO_VERSION: main
 
 .. _`PR #12`: https://github.com/eduNEXT/picasso/pull/12
 
