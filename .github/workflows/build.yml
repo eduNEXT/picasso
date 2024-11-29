@@ -34,6 +34,11 @@ on:
         required: false
         type: string
         default: '3.12'
+      PICASSO_VERSION:
+        description: 'Picasso version to use for the workflow scripts and utility functions. This should be a valid branch, tag or commit and it should match the version of the workflow used.'
+        required: false
+        type: string
+        default: 'v1'
     secrets:
       DOCKERHUB_USERNAME:
         description: 'DockerHub username for login'
@@ -70,7 +75,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: edunext/picasso
-          ref: v1
+          ref: ${{ inputs.PICASSO_VERSION }}
           path: picasso
 
       - name: Checkout strains repository for build configurations

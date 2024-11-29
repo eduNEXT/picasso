@@ -26,7 +26,7 @@ Key features of the Picasso Workflow include:
 - **Configurable BuildKit parallelism**: By default, the workflow limits parallelism during the build process to optimize resource usage, although this can be changed using the ``ENABLE_LIMIT_BUILDKIT_PARALLELISM`` input. This is useful for low-powered machines, like `Github Actions standard runners`_.
 - **Private repository access**: SSH keys are used to clone private repositories securely. The SSH private key should be stored as a secret in the repository, and must have access to the repository specified in ``STRAIN_REPOSITORY``.
 - **Extra commands**: The workflow allows running additional custom commands with ``tutor picasso run-extra-commands``. For details, refer to the `tutor-contrib-picasso`_ documentation.
-- **Environment setup**: The workflow sets up and configures Tutor Virtual Environments (TVM), installs necessary plugins like ``tutor-contrib-picasso``, and prepares the environment to build and push Docker images using the `Tutor CLI`_.
+- **Environment setup**: The workflow sets up installs necessary plugins like ``tutor-contrib-picasso``, and prepares the environment to build and push Docker images using the `Tutor CLI`_.
 
 .. _tutor-contrib-picasso: https://github.com/eduNEXT/tutor-contrib-picasso/
 .. _Github Actions standard runners: https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners
@@ -87,6 +87,18 @@ Before using the workflow, ensure that you have set up the following configurati
    * - ENABLE_LIMIT_BUILDKIT_PARALLELISM (Optional)
      - Enables limiting parallelism with buildkit to decrease resource consumption for those setups with low-powered machines. Default is ``true``.
      - boolean
+     - Input
+   * - RUNNER_WORKFLOW_LABEL (Optional)
+     - The label of the runner workflow to use. Default is ``ubuntu-24.04``.
+     - string
+     - Input
+   * - PYTHON_VERSION (Optional)
+     - The Python version to use in the workflow. Default is ``3.12``.
+     - string
+     - Input
+   * - PICASSO_VERSION (Optional)
+     - Picasso version to use for the workflow scripts and utility functions. This should be a valid branch, tag or commit and it should match the version of the workflow used. Default is the latest release major version, e.g., ``v1``.
+     - string
      - Input
 
 Usage

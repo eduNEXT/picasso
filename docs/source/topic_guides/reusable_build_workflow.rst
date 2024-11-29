@@ -22,14 +22,15 @@ The Picasso Workflow is designed to build Open edX Docker images for Tutor envir
 
 Key features of the Picasso Workflow include:
 
-- **Runs on GitHub-hosted runners**: By default, the workflow uses ``ubuntu-latest`` runners to execute jobs. This can't be changed to self-hosted runners for the time being.
+- **Runs on GitHub-hosted runners**: By default, the workflow uses GitHub hosted runners to execute jobs. This can't be changed to self-hosted runners for the time being.
 - **Builds and pushes Docker images**: The workflow pushes images to Dockerhub by default. This can be customized to push images to other registries.
 - **Supports multiple services**: You can specify the service to build (e.g., ``openedx``, ``mfe``, ``codejail``, etc.) using the ``SERVICE`` input.
 - **Customizable repository and strain**: The workflow allows for specifying the repository, branch, and path to the strain being built. This enables building images from different configurations.
 - **Configurable BuildKit parallelism**: By default, the workflow limits parallelism during the build process to optimize resource usage, although this can be changed using the ``ENABLE_LIMIT_BUILDKIT_PARALLELISM`` input. This is useful for low-powered machines, like `Github Actions standard runners`_.
 - **Private repository access**: SSH keys are used to clone private repositories securely. The SSH private key should be stored as a secret in the repository, and must have access to the repository specified in ``STRAIN_REPOSITORY``.
+- **Configures docker registry**: The workflow sets up the Docker registry to push images to Dockerhub or AWS ECR.
 - **Extra commands**: The workflow allows running additional custom commands with ``tutor picasso run-extra-commands``. For details, refer to the `tutor-contrib-picasso`_ documentation.
-- **Environment setup**: The workflow sets up and configures Tutor Virtual Environments (TVM), installs necessary plugins like ``tutor-contrib-picasso``, and prepares the environment to build and push Docker images using the `Tutor CLI`_.
+- **Environment setup**: The workflow sets up installs necessary plugins like ``tutor-contrib-picasso``, and prepares the environment to build and push Docker images using the `Tutor CLI`_.
 
 .. _tutor-contrib-picasso: https://github.com/eduNEXT/tutor-contrib-picasso/
 .. _Github Actions standard runners: https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners
