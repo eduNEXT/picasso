@@ -95,7 +95,7 @@ jobs:
         working-directory: ${{ github.workspace }}
         env:
           REQUIRED_KEYS: TUTOR_VERSION
-          OPTIONAL_KEYS: DOCKER_REGISTRY
+          OPTIONAL_KEYS: DOCKER_REGISTRY ENABLE_DYNAMIC_IMAGE_TAG REPO_BASE
           CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
           SCRIPT_PATH: picasso/.github/workflows/scripts/get_tutor_config.py
         run: |
@@ -124,6 +124,29 @@ jobs:
       - name: Execute extra commands
         run: |
           tutor picasso run-extra-commands
+
+      - name: Get current time
+        if: ${{ env.ENABLE_DYNAMIC_IMAGE_TAG == 'true' }}
+        uses: josStorer/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYY-MM-DD-HH-mm
+
+      - name: Set docker image tag based on service
+        if: ${{ env.ENABLE_DYNAMIC_IMAGE_TAG == 'true'}}
+        env:
+          DOCKER_REGISTRY: ${{ env.DOCKER_REGISTRY || 'docker.io' }}
+          REPO_BASE: ${{ env.REPO_BASE || format('tutor-openedx/{0}-tutor', inputs.SERVICE) }}
+          SERVICE: ${{ inputs.SERVICE }}
+          TIMESTAMP: ${{ steps.current-time.outputs.formattedTime }}
+        run: |
+          if [ "$SERVICE" = "openedx" ]; then
+            DOCKER_IMAGE="DOCKER_IMAGE_${SERVICE^^}"
+          else
+            DOCKER_IMAGE="${SERVICE^^}_DOCKER_IMAGE"
+          fi
+
+          tutor config save --set "${DOCKER_IMAGE}=${DOCKER_REGISTRY}/${REPO_BASE}:${TUTOR_VERSION#v}-${TIMESTAMP}"
 
       - name: Limit build parallelism to decrease resource usage
         if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}
