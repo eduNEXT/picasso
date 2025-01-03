@@ -19,11 +19,11 @@ on:
         description: 'The service name to build'
         required: true
         type: string
-      ENABLE_LIMIT_BUILDKIT_PARALLELISM:
+      BUILDKIT_MAX_PARALLELISM:
         description: 'Enable buildkit parallelism limit to decrease resource usage. Default is true'
         required: false
-        type: boolean
-        default: true
+        type: number
+        default: 0
       RUNNER_WORKFLOW_LABEL:
         description: 'The label of the runner workflow to run'
         required: false
@@ -131,10 +131,10 @@ jobs:
           tutor picasso run-extra-commands
 
       - name: Limit build parallelism to decrease resource usage
-        if: ${{ inputs.ENABLE_LIMIT_BUILDKIT_PARALLELISM }}
+        if: ${{ inputs.BUILDKIT_MAX_PARALLELISM }}
         run: |
           echo "[worker.oci]
-          max-parallelism = 3" > buildkit.toml
+          max-parallelism = ${{ inputs.BUILDKIT_MAX_PARALLELISM }}" > buildkit.toml
           docker buildx create --use --node=limitparallelsteps --driver=docker-container --config=./buildkit.toml
 
       - name: Configure AWS credentials

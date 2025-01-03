@@ -84,9 +84,9 @@ Before using the workflow, ensure that you have set up the following configurati
      - The service name to build, e.g., ``openedx``. This can be any service recognized by the tutor ecosystem.
      - string
      - Input
-   * - ENABLE_LIMIT_BUILDKIT_PARALLELISM (Optional)
-     - Enables limiting parallelism with buildkit to decrease resource consumption for those setups with low-powered machines. Default is ``true``.
-     - boolean
+   * - BUILDKIT_MAX_PARALLELISM (Optional)
+     - Configure the maximum parallelism for your builds. Default is ``0`` (no limit).
+     - number
      - Input
    * - RUNNER_WORKFLOW_LABEL (Optional)
      - The label of the runner workflow to use. Default is ``ubuntu-24.04``.
@@ -127,6 +127,18 @@ To use the Picasso Workflow, follow these steps:
 2. Modify the ``STRAIN_REPOSITORY``, ``STRAIN_REPOSITORY_BRANCH``, ``STRAIN_PATH``, and ``SERVICE`` inputs to match your project requirements.
 
 3. You can also set up a custom trigger for the workflow based on your project requirements.
+
+..
+
+    **Note**
+
+    When attempting to build an MFE image it might be possible to exhaust the resources
+    on the GitHub runner. You can specify a lower value of ``BUILDKIT_MAX_PARALLELISM``
+    to reduce the amount of resources used, if that isn't enough you can use a
+    different runner (e.g. a hosted `large runner`_) via the
+    ``RUNNER_WORKFLOW_LABEL`` input.
+
+.. _large runner: https://docs.github.com/en/actions/using-github-hosted-runners/using-larger-runners
 
 Getting Help
 ************
