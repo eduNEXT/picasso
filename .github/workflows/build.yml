@@ -69,6 +69,7 @@ jobs:
     env:
       TUTOR_ROOT: ${{ github.workspace }}/strains/${{ inputs.STRAIN_PATH }}
       TUTOR_PLUGINS_ROOT: ${{ github.workspace }}/strains/${{ inputs.STRAIN_PATH }}/plugins
+      DOCKER_REGISTRY: 'aws'
 
     steps:
       - name: Checkout Picasso repository for utility scripts
