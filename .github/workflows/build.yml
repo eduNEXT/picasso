@@ -78,13 +78,13 @@ jobs:
           ref: ${{ inputs.PICASSO_VERSION }}
           path: picasso
 
-      - name: Checkout strain repository
+      - name: Checkout strains repository for build configurations
         uses: actions/checkout@v4
         with:
           repository: ${{ inputs.STRAIN_REPOSITORY }}
           ref: ${{ inputs.STRAIN_REPOSITORY_BRANCH }}
-          path: strains
           ssh-key: ${{ inputs.STRAIN_REPOSITORY != github.repository && secrets.SSH_PRIVATE_KEY || '' }}
+          path: strains
 
       - name: Setup Python
         uses: actions/setup-python@v5
