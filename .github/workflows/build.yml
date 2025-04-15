@@ -78,21 +78,13 @@ jobs:
           ref: ${{ inputs.PICASSO_VERSION }}
           path: picasso
 
-      - name: Checkout external strain repository
-        if: ${{ inputs.STRAIN_REPOSITORY != github.repository }}
+      - name: Checkout strain repository
         uses: actions/checkout@v4
         with:
           repository: ${{ inputs.STRAIN_REPOSITORY }}
           ref: ${{ inputs.STRAIN_REPOSITORY_BRANCH }}
-          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           path: strains
-
-      - name: Checkout current repository as strain source
-        if: ${{ inputs.STRAIN_REPOSITORY == github.repository }}
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.STRAIN_REPOSITORY_BRANCH }}
-          path: strains
+          ssh-key: ${{ inputs.STRAIN_REPOSITORY != github.repository && secrets.SSH_PRIVATE_KEY || '' }}
 
       - name: Setup Python
         uses: actions/setup-python@v5
