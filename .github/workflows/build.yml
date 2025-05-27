@@ -114,7 +114,7 @@ jobs:
 
       - name: Enable and install picasso plugin in Tutor environment
         run: |
-          pip install git+https://github.com/eduNEXT/tutor-contrib-picasso@teak
+          pip install git+https://github.com/eduNEXT/tutor-contrib-picasso@v0.2.0
           tutor plugins enable picasso
 
       - name: Setup SSH agent for private repositories cloning
