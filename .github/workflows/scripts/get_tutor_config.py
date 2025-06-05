@@ -30,6 +30,7 @@ def load_config(file_path: str) -> dict:
     Returns:
         dict: The configuration data.
     """
+    print(file_path)
     if not os.path.exists(file_path):
         sys.exit("ERROR: file config.yml doesn't exist")
 
