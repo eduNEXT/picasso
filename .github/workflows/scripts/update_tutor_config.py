@@ -7,7 +7,7 @@ import string
 from datetime import datetime
 
 
-def load_yaml(file_path: str) -> dict:
+def load_yaml(yaml_file: str) -> dict:
     """Loads the YAML configuration from the specified file.
 
     Args:
@@ -16,7 +16,7 @@ def load_yaml(file_path: str) -> dict:
     Returns:
         dict: The configuration data.
     """
-    print(file_path)
+    file_path = os.path.join(os.getcwd(), yaml_file)
     if not os.path.exists(file_path):
         sys.exit("ERROR: file config.yml doesn't exist")
 
@@ -59,9 +59,9 @@ def parse_args():
 
 
 def main(config_file="config.yml", service=None):
-    file_path = os.path.join(os.getcwd(), config_file)
-    tutor_config = load_yaml(file_path)
-    tag_map = load_yaml("service_tag_map.yml")
+    tag_map_path = "picasso/.github/workflows/scripts/get_tutor_config.py/service_tag_map.yml"
+    tutor_config = load_yaml(config_file)
+    tag_map = load_yaml(tag_map_path)
 
     if service not in tag_map:
         sys.exit(f"ERROR: Service '{service}' not found in service_tag_map.yml")
