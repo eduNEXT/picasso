@@ -59,7 +59,7 @@ def parse_args():
 
 
 def main(config_file="config.yml", service=None):
-    tag_map_path = "picasso/.github/workflows/scripts/get_tutor_config.py/service_tag_map.yml"
+    tag_map_path = "picasso/.github/workflows/scripts/service_tag_map.yml"
     tutor_config = load_yaml(config_file)
     tag_map = load_yaml(tag_map_path)
 
