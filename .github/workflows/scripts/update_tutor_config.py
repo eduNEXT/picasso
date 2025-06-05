@@ -24,8 +24,9 @@ def load_yaml(yaml_file: str) -> dict:
         return yaml.safe_load(file)
 
 
-def save_config(file_path: str, config: dict):
+def save_config(config_file: str, config: dict):
     """Saves the modified configuration back to the file."""
+    file_path = os.path.join(os.getcwd(), config_file)
     with open(file_path, "w", encoding="utf-8") as file:
         yaml.dump(config, file, default_flow_style=False)
 
@@ -69,7 +70,7 @@ def main(config_file="config.yml", service=None):
     tag_key = tag_map[service]
 
     tutor_config[tag_key] = generate_custom_tag(tutor_config["TUTOR_APP_NAME"])
-    save_config(file_path, config)
+    save_config(config_file, config)
 
 
 if __name__ == "__main__":
