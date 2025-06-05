@@ -1,0 +1,3 @@
+openedx: DOCKER_IMAGE_OPENEDX
+mfe: MFE_DOCKER_IMAGE
+aspects-superset: DOCKER_IMAGE_SUPERSET

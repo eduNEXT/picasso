@@ -39,6 +39,11 @@ on:
         required: false
         type: string
         default: 'v1'
+      USE_RANDOM_IMAGE_TAG:
+        description: 'If this field is set to true, the image tag configured in the config.yml file will be skipped, and a randomly generated image tag will be used instead.'
+        required: false
+        type: boolean
+        default: false
     secrets:
       DOCKERHUB_USERNAME:
         description: 'DockerHub username for login'
@@ -106,6 +111,16 @@ jobs:
         run: |
           ENV_VARS=$(python $SCRIPT_PATH --config-file $CONFIG_FILE --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)
           echo "$ENV_VARS" >> $GITHUB_ENV
+
+      - name: Replace the image tag name with a random one.
+        if: ${{ inputs.USE_RANDOM_IMAGE_TAG }}
+        working-directory: ${{ github.workspace }}
+        env:
+          SERVICE: ${{ inputs.SERVICE }}
+          CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
+          SCRIPT_PATH: picasso/.github/workflows/scripts/update_tutor_config.py
+        run: |
+          python $SCRIPT_PATH --config-file $CONFIG_FILE --service $SERVICE
 
       - name: Install Tutor and its dependencies from the version specified in the config.yml
         run: |
