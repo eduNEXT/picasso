@@ -119,8 +119,10 @@ jobs:
           SERVICE: ${{ inputs.SERVICE }}
           CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
           SCRIPT_PATH: picasso/.github/workflows/scripts/update_tutor_config.py
+          STRAIN_REPOSITORY: ${{ inputs.STRAIN_REPOSITORY }}
         run: |
-          python $SCRIPT_PATH --config-file $CONFIG_FILE --service $SERVICE
+          REPO_NAME="${STRAIN_REPOSITORY##*/}"
+          python $SCRIPT_PATH --config-file $CONFIG_FILE --service $SERVICE --client $REPO_NAME
 
       - name: Install Tutor and its dependencies from the version specified in the config.yml
         run: |
