@@ -70,7 +70,7 @@ def main(config_file="config.yml", service=None):
     tag_key = tag_map[service]
 
     tutor_config[tag_key] = generate_custom_tag(tutor_config["TUTOR_APP_NAME"])
-    save_config(config_file, config)
+    save_config(config_file, tutor_config)
 
 
 if __name__ == "__main__":
