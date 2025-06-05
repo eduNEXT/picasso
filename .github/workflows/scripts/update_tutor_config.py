@@ -37,7 +37,7 @@ def generate_custom_tag(openedx_release: str, length: int = 4) -> str:
     date_part = now.strftime("%Y%m%d")
     time_part = now.strftime("%H%M")
     random_part = ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
-    return f"{openedx_release}-{date_part}-{time_part}-{random_part}"
+    return f"209479273378.dkr.ecr.us-east-1.amazonaws.com/{openedx_release}-{date_part}-{time_part}-{random_part}"
 
 
 def parse_args():
