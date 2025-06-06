@@ -1,3 +1,21 @@
+# This YAML file defines the mapping between service names and the corresponding
+# keys in the Tutor configuration (`config.yml`) where each service’s image name
+# or tag is stored.
+#
+# It is used by automation scripts (such as those for dynamic tag generation)
+# to identify the exact key in `config.yml` that should be updated for a given service.
+#
+# Structure:
+#   <service_name>: <config_key_in_config_yml>
+#
+# Where:
+# - `service_name` is the logical name of the microservice (e.g., "openedx", "ecommerce", "forum")
+# - `config_key_in_config_yml` is the key under which the Docker image name/tag is stored in `config.yml`
+#
+#
+# This allows scripts to remain generic and dynamically locate the correct field to update
+# based on which service is being processed.
+
 openedx: DOCKER_IMAGE_OPENEDX
 mfe: MFE_DOCKER_IMAGE
 aspects-superset: DOCKER_IMAGE_SUPERSET

@@ -39,11 +39,31 @@ on:
         required: false
         type: string
         default: 'v1'
-      USE_RANDOM_IMAGE_TAG:
-        description: 'If this field is set to true, the image tag configured in the config.yml file will be skipped, and a randomly generated image tag will be used instead.'
+      USE_DYNAMIC_IMAGE_TAG:
+        description: 'If this field is set to true, the image tag configured in the config.yml file will be skipped, and a dinamic generated image tag will be used instead.'
         required: false
         type: boolean
         default: false
+      UPDATE_REMOTE_CONFIG:
+        description: 'If this field is set to true, a commit will be created with the updated image tag name in the config.yml file'
+        required: false
+        type: boolean
+        default: false
+      USE_RANDOM_SUFFIX:
+        description: 'This variable is only used if USE_DYNAMIC_IMAGE_TAG is enabled. When enabled, a four-character alphanumeric suffix is added at the end of the generated image tag.'
+        required: false
+        type: boolean
+        default: false
+      PREFIX:
+        description: 'Prefix added to the dynamically generated image tag. Only used if USE_DYNAMIC_IMAGE_TAG is enabled.'
+        required: false
+        type: string
+        default: ""
+      TIMESTAMP_FORMAT:
+        description: 'Timestamp format used in the generated image tag. Follows Python’s strftime syntax. Only used if USE_DYNAMIC_IMAGE_TAG is enabled.'
+        required: false
+        type: string
+        default: "%Y%m%d-%H%M"
     secrets:
       DOCKERHUB_USERNAME:
         description: 'DockerHub username for login'
@@ -112,34 +132,6 @@ jobs:
           ENV_VARS=$(python $SCRIPT_PATH --config-file $CONFIG_FILE --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)
           echo "$ENV_VARS" >> $GITHUB_ENV
 
-      - name: Replace the image tag name with a random one.
-        if: ${{ inputs.USE_RANDOM_IMAGE_TAG }}
-        working-directory: ${{ github.workspace }}
-        env:
-          SERVICE: ${{ inputs.SERVICE }}
-          CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
-          SCRIPT_PATH: picasso/.github/workflows/scripts/update_tutor_config.py
-          STRAIN_REPOSITORY: ${{ inputs.STRAIN_REPOSITORY }}
-        run: |
-          REPO_NAME="${STRAIN_REPOSITORY##*/}"
-          python $SCRIPT_PATH --config-file $CONFIG_FILE --service $SERVICE --client $REPO_NAME
-
-      - name: Update image tag in config.yml
-        if: ${{ inputs.USE_RANDOM_IMAGE_TAG }}
-        working-directory: ${{ github.workspace }}/strains
-        env:
-          CONFIG_FILE: build/config.yml 
-        run: |
-          git config user.name "GitHub Actions" 
-          git config user.email "actions@github.com"
-          git add $CONFIG_FILE
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "chore: update service: ${{ inputs.SERVICE }} image"
-            git push
-          fi
-
       - name: Install Tutor and its dependencies from the version specified in the config.yml
         run: |
           pip install git+https://github.com/overhangio/tutor.git@$TUTOR_VERSION
@@ -190,6 +182,30 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Create a dynamic image tag name and return the key where it should be configured.
+        if: ${{ inputs.USE_DYNAMIC_IMAGE_TAG }}
+        working-directory: ${{ github.workspace }}
+        env:
+          SERVICE: ${{ inputs.SERVICE }}
+          CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
+          SCRIPT_PATH: picasso/.github/workflows/scripts/dynamic_image_name.py
+          PREFIX: ${{ inputs.PREFIX }}
+          TIMESTAMP_FORMAT: ${{ inputs.TIMESTAMP_FORMAT }}
+          USE_RANDOM_SUFFIX: ${{ inputs.USE_RANDOM_SUFFIX }}
+        run: |
+          REPO_NAME="${STRAIN_REPOSITORY##*/}"
+          ENV_VARS=$(python $SCRIPT_PATH \
+                      --config-file "$CONFIG_FILE" \
+                      --service "$SERVICE" \
+                      --prefix "$PREFIX" \
+                      --timestamp_format "$TIMESTAMP_FORMAT" \
+                      --use_random_suffix "$USE_RANDOM_SUFFIX")
+          echo "$ENV_VARS" >> $GITHUB_ENV
+
+      - name: Update image tag in config.yml locally
+        if: ${{ inputs.USE_DYNAMIC_IMAGE_TAG }}
+        run: tutor config save --set $TARGET_KEY=$DYNAMIC_IMAGE_NAME
+
       - name: Build service image with no cache
         env:
           SERVICE: ${{ inputs.SERVICE }}
@@ -211,3 +227,24 @@ jobs:
           SERVICE: ${{ inputs.SERVICE }}
         run: |
           tutor images push $SERVICE
+
+      - name: Show image name for service $SERVICE
+        run: tutor config printvalue $TARGET_KEY
+
+      - name: Update image tag in remote repository
+        if: ${{ inputs.UPDATE_REMOTE_CONFIG }}
+        working-directory: ${{ github.workspace }}/strains
+        env:
+          CONFIG_FILE: build/config.yml 
+        run: |
+          git config user.name "GitHub Actions" 
+          git config user.email "actions@github.com"
+          git restore $CONFIG_FILE
+          tutor config save --set $TARGET_KEY=$DYNAMIC_IMAGE_NAME
+          git add $CONFIG_FILE
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update service: ${{ inputs.SERVICE }} image"
+            git push
+          fi
