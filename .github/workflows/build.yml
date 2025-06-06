@@ -229,6 +229,7 @@ jobs:
           tutor images push $SERVICE
 
       - name: Show image name for service
+        if: ${{ inputs.USE_DYNAMIC_IMAGE_TAG }}
         run: tutor config printvalue $TARGET_KEY
 
       - name: Update image tag in remote repository
