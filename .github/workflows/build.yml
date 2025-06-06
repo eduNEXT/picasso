@@ -132,10 +132,34 @@ jobs:
           ENV_VARS=$(python $SCRIPT_PATH --config-file $CONFIG_FILE --required-keys $REQUIRED_KEYS --optional-keys $OPTIONAL_KEYS)
           echo "$ENV_VARS" >> $GITHUB_ENV
 
+      - name: Create a dynamic image tag name, also set key and new image name as environment variables
+        if: ${{ inputs.USE_DYNAMIC_IMAGE_TAG }}
+        working-directory: ${{ github.workspace }}
+        env:
+          CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
+          SCRIPT_PATH: picasso/.github/workflows/scripts/dynamic_image_name.py
+          SERVICE: ${{ inputs.SERVICE }}
+          PREFIX: ${{ inputs.PREFIX }}
+          TIMESTAMP_FORMAT: ${{ inputs.TIMESTAMP_FORMAT }}
+          USE_RANDOM_SUFFIX: ${{ inputs.USE_RANDOM_SUFFIX }}
+        run: |
+          REPO_NAME="${STRAIN_REPOSITORY##*/}"
+          ENV_VARS=$(python $SCRIPT_PATH \
+                      --config-file "$CONFIG_FILE" \
+                      --service "$SERVICE" \
+                      --prefix "$PREFIX" \
+                      --timestamp-format "$TIMESTAMP_FORMAT" \
+                      --use-random-suffix "$USE_RANDOM_SUFFIX")
+          echo "$ENV_VARS" >> $GITHUB_ENV
+
       - name: Install Tutor and its dependencies from the version specified in the config.yml
         run: |
           pip install git+https://github.com/overhangio/tutor.git@$TUTOR_VERSION
           tutor config save
+
+      - name: Update image tag in config.yml locally
+        if: ${{ inputs.USE_DYNAMIC_IMAGE_TAG }}
+        run: tutor config save --set $TARGET_KEY=$DYNAMIC_IMAGE_NAME
 
       - name: Enable and install picasso plugin in Tutor environment
         run: |
@@ -182,30 +206,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Create a dynamic image tag name and return the key where it should be configured.
-        if: ${{ inputs.USE_DYNAMIC_IMAGE_TAG }}
-        working-directory: ${{ github.workspace }}
-        env:
-          SERVICE: ${{ inputs.SERVICE }}
-          CONFIG_FILE: strains/${{ inputs.STRAIN_PATH }}/config.yml
-          SCRIPT_PATH: picasso/.github/workflows/scripts/dynamic_image_name.py
-          PREFIX: ${{ inputs.PREFIX }}
-          TIMESTAMP_FORMAT: ${{ inputs.TIMESTAMP_FORMAT }}
-          USE_RANDOM_SUFFIX: ${{ inputs.USE_RANDOM_SUFFIX }}
-        run: |
-          REPO_NAME="${STRAIN_REPOSITORY##*/}"
-          ENV_VARS=$(python $SCRIPT_PATH \
-                      --config-file "$CONFIG_FILE" \
-                      --service "$SERVICE" \
-                      --prefix "$PREFIX" \
-                      --timestamp_format "$TIMESTAMP_FORMAT" \
-                      --use_random_suffix "$USE_RANDOM_SUFFIX")
-          echo "$ENV_VARS" >> $GITHUB_ENV
-
-      - name: Update image tag in config.yml locally
-        if: ${{ inputs.USE_DYNAMIC_IMAGE_TAG }}
-        run: tutor config save --set $TARGET_KEY=$DYNAMIC_IMAGE_NAME
-
       - name: Build service image with no cache
         env:
           SERVICE: ${{ inputs.SERVICE }}
@@ -228,19 +228,25 @@ jobs:
         run: |
           tutor images push $SERVICE
 
-      - name: Show image name for service $SERVICE
+      - name: Show image name for service
         run: tutor config printvalue $TARGET_KEY
 
       - name: Update image tag in remote repository
-        if: ${{ inputs.UPDATE_REMOTE_CONFIG }}
+        if: ${{ inputs.USE_DYNAMIC_IMAGE_TAG && inputs.UPDATE_REMOTE_CONFIG }}
         working-directory: ${{ github.workspace }}/strains
         env:
-          CONFIG_FILE: build/config.yml 
+          CONFIG_FILE: build/config.yml
+          SERVICE: ${{ inputs.SERVICE }}
+          SCRIPT_PATH: ../picasso/.github/workflows/scripts/dynamic_image_name.py
         run: |
           git config user.name "GitHub Actions" 
           git config user.email "actions@github.com"
           git restore $CONFIG_FILE
-          tutor config save --set $TARGET_KEY=$DYNAMIC_IMAGE_NAME
+          python $SCRIPT_PATH \
+            --config-file ../strains/"$CONFIG_FILE" \
+            --service "$SERVICE" \
+            --save-config "true" \
+            --image-name "$DYNAMIC_IMAGE_NAME"
           git add $CONFIG_FILE
           if git diff --cached --quiet; then
             echo "No changes to commit"

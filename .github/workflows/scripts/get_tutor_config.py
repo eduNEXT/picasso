@@ -32,7 +32,7 @@ def load_config(config_file: str) -> dict:
     """
     file_path = os.path.join(os.getcwd(), config_file)
     if not os.path.exists(file_path):
-        sys.exit("ERROR: file config.yml doesn't exist")
+        sys.exit(f"ERROR: path: {file_path} doesn't exist")
 
     with open(file_path, "r", encoding="utf-8") as file:
         return yaml.safe_load(file)
