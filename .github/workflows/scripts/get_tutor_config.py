@@ -21,17 +21,18 @@ import yaml
 import argparse
 
 
-def load_config(file_path: str) -> dict:
+def load_config(config_file: str) -> dict:
     """Loads the YAML configuration from the specified file.
 
     Args:
-        file_path (str): The path to the configuration file.
+        config_file (str): The path to the configuration file.
 
     Returns:
         dict: The configuration data.
     """
+    file_path = os.path.join(os.getcwd(), config_file)
     if not os.path.exists(file_path):
-        sys.exit("ERROR: file config.yml doesn't exist")
+        sys.exit(f"ERROR: path: {file_path} doesn't exist")
 
     with open(file_path, "r", encoding="utf-8") as file:
         return yaml.safe_load(file)
@@ -104,8 +105,7 @@ def main(config_file="config.yml", required_keys=None, optional_keys=None):
         required_keys (list): The list of required keys.
         optional_keys (list): The list of optional keys.
     """
-    file_path = os.path.join(os.getcwd(), config_file)
-    tutor_config = load_config(file_path)
+    tutor_config = load_config(config_file)
 
     check_required_keys(tutor_config, required_keys)
 
