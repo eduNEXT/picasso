@@ -40,7 +40,7 @@ on:
         type: string
         default: 'v1'
       USE_DYNAMIC_IMAGE_TAG:
-        description: 'If this field is set to true, the image tag configured in the config.yml file will be skipped, and a dinamic generated image tag will be used instead.'
+        description: 'If set to true, the image tag defined in config.yml will be ignored, and a dynamically generated tag will be used instead.'
         required: false
         type: boolean
         default: false
