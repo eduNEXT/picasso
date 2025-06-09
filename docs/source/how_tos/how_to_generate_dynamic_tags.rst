@@ -63,7 +63,8 @@ To enable this behavior:
 Considerations
 --------------
 
-Ensure the ``PICASSO_VERSION`` parameter is set to a version of Picasso that includes these changes for the feature to function properly.
+- It is important that the image for the service to be built has been previously defined, as this implementation relies on the existing information—such as the Docker registry, repository, and organization—from the image already configured in the strain. Including a tag is not required, but if one is present, it will not cause any errors.
+- Ensure the ``PICASSO_VERSION`` parameter is set to a version of Picasso that includes these changes for the feature to function properly.
 
 Example Configuration
 ---------------------
