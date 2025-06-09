@@ -49,7 +49,7 @@ on:
         required: false
         type: boolean
         default: false
-      USE_RANDOM_SUFFIX:
+      ADD_RANDOM_SUFFIX_TO_IMAGE_TAG:
         description: 'This variable is only used if USE_DYNAMIC_IMAGE_TAG is enabled. When enabled, a four-character alphanumeric suffix is added at the end of the generated image tag.'
         required: false
         type: boolean
