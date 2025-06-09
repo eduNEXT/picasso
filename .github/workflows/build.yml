@@ -54,7 +54,7 @@ on:
         required: false
         type: boolean
         default: false
-      PREFIX:
+      IMAGE_TAG_PREFIX:
         description: 'Prefix added to the dynamically generated image tag. Only used if USE_DYNAMIC_IMAGE_TAG is enabled.'
         required: false
         type: string
