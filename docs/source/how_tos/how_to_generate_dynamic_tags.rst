@@ -12,12 +12,12 @@ The pattern used for generating dynamic tags is illustrated below:
 
 ::
 
-    {tutor_version}-{image_tag_prefix}{timestamp}-{random_part}
+    {tutor_version}-{image_tag_prefix}{timestamp}-{random_suffix}
 
 - ``tutor_version``: The version of Tutor used to build the image.
-- ``image_tag_prefix``: A static prefix that can be added to the image tag (string type).
+- ``image_tag_prefix (optional)``: A static prefix that can be added to the image tag (string type).
 - ``timestamp``: The date and time when the image was built.
-- ``random_part``: A 4-character alphanumeric string generated randomly.
+- ``random_suffix (optional)``: A 4-character alphanumeric string generated randomly.
 
 Configuring Dynamic Tag Generation
 ----------------------------------

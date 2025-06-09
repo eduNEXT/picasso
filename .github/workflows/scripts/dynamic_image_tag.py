@@ -89,13 +89,12 @@ def generate_image_tag(current_image_name: str,  tutor_version: str, service: st
     """
     now = datetime.now()
     timestamp = now.strftime(timestamp_format)
-    random_part = "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
     current_image_name_without_tag = current_image_name.split(":")[0]
     updated_image_tag = f"{current_image_name_without_tag}:{tutor_version}-{image_tag_prefix}{timestamp}"
 
     if add_random_suffix_to_image_tag:
-        suffix = f"-{random_part}"
-        updated_image_tag = f"{updated_image_tag}{suffix}"
+        random_suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
+        updated_image_tag = f"{updated_image_tag}-{random_suffix}"
 
     return updated_image_tag
 
