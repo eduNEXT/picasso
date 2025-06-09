@@ -44,7 +44,7 @@ on:
         required: false
         type: boolean
         default: false
-      UPDATE_REMOTE_CONFIG:
+      UPDATE_IMAGE_TAG_IN_REPO:
         description: 'If this field is set to true, a commit will be created with the updated image tag name in the config.yml file'
         required: false
         type: boolean
