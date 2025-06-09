@@ -12,10 +12,10 @@ The pattern used for generating dynamic tags is illustrated below:
 
 ::
 
-    {tutor_version}-{IMAGE_TAG_PREFIX}{timestamp}-{random_part}
+    {tutor_version}-{image_tag_prefix}{timestamp}-{random_part}
 
 - ``tutor_version``: The version of Tutor used to build the image.
-- ``prefix``: A static prefix that can be added to the image tag (string type).
+- ``image_tag_prefix``: A static prefix that can be added to the image tag (string type).
 - ``timestamp``: The date and time when the image was built.
 - ``random_part``: A 4-character alphanumeric string generated randomly.
 
@@ -57,7 +57,7 @@ An additional feature allows the newly generated tag to be committed and pushed 
 To enable this behavior:
 
 - The job executing the Picasso workflow **must have** `contents: write` permissions.
-- The input ``UPDATE_REMOTE_CONFIG`` **must be set to** `true`.
+- The input ``UPDATE_IMAGE_TAG_IN_REPO`` **must be set to** `true`.
 - This will only work **if** ``USE_DYNAMIC_IMAGE_TAG`` is also enabled.
 
 Considerations
