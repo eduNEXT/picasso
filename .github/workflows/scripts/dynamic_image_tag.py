@@ -49,7 +49,7 @@ import os
 import sys
 import yaml
 import argparse
-import random
+import secrets
 import string
 from datetime import datetime
 from get_tutor_config import load_config
@@ -60,7 +60,7 @@ def str_to_bool(value):
 
     Accepts 'true' (case-insensitive) as True; anything else as False.
     """
-    return value.lower() == 'true'
+    return value.lower() == "true"
 
 
 def write_config_file(config_file: str, config: dict):
@@ -93,7 +93,8 @@ def generate_image_tag(current_image_name: str,  tutor_version: str, service: st
     updated_image_tag = f"{current_image_name_without_tag}:{tutor_version}-{image_tag_prefix}{timestamp}"
 
     if add_random_suffix_to_image_tag:
-        random_suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
+        alphabet = string.ascii_lowercase + string.digits
+        random_suffix = "".join(secrets.choice(alphabet) for i in range(length))
         updated_image_tag = f"{updated_image_tag}-{random_suffix}"
 
     return updated_image_tag
@@ -172,7 +173,7 @@ def main(config_file: str = "config.yml", service: str = None, image_tag_prefix:
     target_key_map = load_config(target_key_map_path)
 
     if service not in target_key_map:
-        sys.exit(f"ERROR: Service '{service}' not found in service_tag_map.yml")
+        sys.exit(f"ERROR: Service {service} not found in service_tag_map.yml")
 
     target_key = target_key_map[service]
 
