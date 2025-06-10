@@ -155,7 +155,7 @@ jobs:
                       --service "$SERVICE" \
                       --image-tag-prefix "$IMAGE_TAG_PREFIX" \
                       --timestamp-format "$TIMESTAMP_FORMAT" \
-                      --add-random-suffix-to-image-tag "$ADD_RANDOM_SUFFIX_TO_IMAGE_TAG"
+                      --add-random-suffix-to-image-tag "$ADD_RANDOM_SUFFIX_TO_IMAGE_TAG" \
                       --random-suffix-length "$RANDOM_SUFFIX_LENGTH")
           echo "$ENV_VARS" >> $GITHUB_ENV
 
