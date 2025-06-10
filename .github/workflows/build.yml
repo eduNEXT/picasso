@@ -50,10 +50,15 @@ on:
         type: boolean
         default: false
       ADD_RANDOM_SUFFIX_TO_IMAGE_TAG:
-        description: 'Appends a random four-character alphanumeric suffix to the image tag. Only used if USE_DYNAMIC_IMAGE_TAG is enabled.'
+        description: 'Appends a random four-character alphanumeric suffix to the image tag by default. If RANDOM_SUFFIX_LENGTH is defined, the length of the suffix will be determined by that setting. This option is only used if USE_DYNAMIC_IMAGE_TAG is enabled.'
         required: false
         type: boolean
         default: false
+      RANDOM_SUFFIX_LENGTH:
+        description: 'Specifies the number of random characters to append as a random suffix'
+        required: false
+        type: string
+        default: "4"
       IMAGE_TAG_PREFIX:
         description: 'Prefix added to the dynamically generated image tag. Only used if USE_DYNAMIC_IMAGE_TAG is enabled.'
         required: false
@@ -142,6 +147,7 @@ jobs:
           IMAGE_TAG_PREFIX: ${{ inputs.IMAGE_TAG_PREFIX }}
           TIMESTAMP_FORMAT: ${{ inputs.TIMESTAMP_FORMAT }}
           ADD_RANDOM_SUFFIX_TO_IMAGE_TAG: ${{ inputs.ADD_RANDOM_SUFFIX_TO_IMAGE_TAG }}
+          RANDOM_SUFFIX_LENGTH: ${{ inputs.RANDOM_SUFFIX_LENGTH }}
         run: |
           REPO_NAME="${STRAIN_REPOSITORY##*/}"
           ENV_VARS=$(python $SCRIPT_PATH \
@@ -149,7 +155,8 @@ jobs:
                       --service "$SERVICE" \
                       --image-tag-prefix "$IMAGE_TAG_PREFIX" \
                       --timestamp-format "$TIMESTAMP_FORMAT" \
-                      --add-random-suffix-to-image-tag "$ADD_RANDOM_SUFFIX_TO_IMAGE_TAG")
+                      --add-random-suffix-to-image-tag "$ADD_RANDOM_SUFFIX_TO_IMAGE_TAG"
+                      --random-suffix-length "$RANDOM_SUFFIX_LENGTH")
           echo "$ENV_VARS" >> $GITHUB_ENV
 
       - name: Install Tutor and its dependencies from the version specified in the config.yml

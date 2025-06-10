@@ -30,6 +30,7 @@ Arguments:
 - --image-tag-prefix: Prefix for the image tag, typically the Open edX release name.
 - --timestamp-format: Format of the timestamp to use in the tag.
 - --add-random-suffix-to-image-tag: Whether to append a random string to the tag.
+- --random-suffix-length: Specifies the number of random characters to append as a random suffix 
 - --save-config: If true, the image name will be saved back into `config.yml`.
 - --image-tag: The full image tag to save in config (only used with --save-config).
 
@@ -72,7 +73,7 @@ def write_config_file(config_file: str, config: dict):
 
 def generate_image_tag(current_image_name: str,  tutor_version: str, service: str, 
                       image_tag_prefix: str, timestamp_format: str, add_random_suffix_to_image_tag: bool, 
-                      length: int = 4) -> str:
+                      random_suffix_length: int) -> str:
     """
     Generate a new image tag based on the base name, timestamp, and optional random suffix.
 
@@ -81,8 +82,8 @@ def generate_image_tag(current_image_name: str,  tutor_version: str, service: st
         service (str): The name of the service (not used directly here but passed through).
         image_tag_prefix (str): Prefix for the generated tag (usually the Open edX release name).
         timestamp_format (str): Format string for the timestamp (used by strftime).
-        use_random_suffix (bool): Whether to append a random string to the tag.
-        length (int): Length of the random string (if used).
+        add_random_suffix_to_image_tag (bool): Whether to append a random string to the tag.
+        random_suffix_length (int): Length of the random string (if used).
 
     Returns:
         str: The updated image name with the new tag.
@@ -94,7 +95,7 @@ def generate_image_tag(current_image_name: str,  tutor_version: str, service: st
 
     if add_random_suffix_to_image_tag:
         alphabet = string.ascii_lowercase + string.digits
-        random_suffix = "".join(secrets.choice(alphabet) for i in range(length))
+        random_suffix = "".join(secrets.choice(alphabet) for i in range(random_suffix_length))
         updated_image_tag = f"{updated_image_tag}-{random_suffix}"
 
     return updated_image_tag
@@ -139,6 +140,12 @@ def parse_args():
         help="Whether to append a random alphanumeric suffix to the image tag (e.g., -a1b2).",
     )
     parser.add_argument(
+        "--random-suffix-length",
+        default=4,
+        type=int,
+        help="Specifies the number of random characters to append as a random suffix",
+    )
+    parser.add_argument(
         "--save-config",
         default=False,
         type=str_to_bool,
@@ -155,7 +162,7 @@ def parse_args():
 
 def main(config_file: str = "config.yml", service: str = None, image_tag_prefix: str = "", 
          timestamp_format: str = "%Y%m%d-%H%M", add_random_suffix_to_image_tag: bool = False, 
-         save_config: bool = False, image_tag: str = None) -> None:
+         random_suffix_length: int = 4, save_config: bool = False, image_tag: str = None) -> None:
     """
     Load configuration, generate a dynamic image tag, and print or update config.
 
@@ -165,6 +172,7 @@ def main(config_file: str = "config.yml", service: str = None, image_tag_prefix:
         image_tag_prefix (str): Prefix to use in the image tag.
         timestamp_format (str): Format for the timestamp.
         use_random_suffix (bool): Whether to append a random suffix to the tag.
+        random_suffix_length (int): Specifies the number of random characters to append as a random suffix
         save_config (bool): If True, the image name will be saved directly to config.yml.
         image_tag (str): The image name to save (used only if save_config is True).
     """
@@ -194,6 +202,7 @@ def main(config_file: str = "config.yml", service: str = None, image_tag_prefix:
             image_tag_prefix=image_tag_prefix,
             timestamp_format=timestamp_format,
             add_random_suffix_to_image_tag=add_random_suffix_to_image_tag,
+            random_suffix_length=random_suffix_length
         )
 
         env_vars = []
