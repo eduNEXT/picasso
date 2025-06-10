@@ -27,6 +27,7 @@ Key features of the Picasso Workflow include:
 - **Private repository access**: SSH keys are used to clone private repositories securely. The SSH private key should be stored as a secret in the repository, and must have access to the repository specified in ``STRAIN_REPOSITORY``.
 - **Extra commands**: The workflow allows running additional custom commands with ``tutor picasso run-extra-commands``. For details, refer to the `tutor-contrib-picasso`_ documentation.
 - **Environment setup**: The workflow sets up installs necessary plugins like ``tutor-contrib-picasso``, and prepares the environment to build and push Docker images using the `Tutor CLI`_.
+- **Dynamic tag generation**: If this workflow configuration is enabled, a dynamic tag will be generated to build the image for the specified service. Additionally, it is possible to create a commit in the repository where the config.yml used to build the service is located, updating it with the new image tag.
 
 .. _tutor-contrib-picasso: https://github.com/eduNEXT/tutor-contrib-picasso/
 .. _Github Actions standard runners: https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners
@@ -98,6 +99,30 @@ Before using the workflow, ensure that you have set up the following configurati
      - Input
    * - PICASSO_VERSION (Optional)
      - Picasso version to use for the workflow scripts and utility functions. This should be a valid branch, tag or commit and it should match the version of the workflow used. Default is the latest release major version, e.g., ``v1``.
+     - string
+     - Input
+   * - USE_DYNAMIC_IMAGE_TAG (Optional)
+     - If set to ``true``, the image tag defined in config.yml will be ignored, and a dynamically generated tag will be used instead. Default is ``false``
+     - boolean
+     - Input
+   * - UPDATE_IMAGE_TAG_IN_REPO (Optional)
+     - If this field is set to ``true``, a commit will be created with the updated image tag name in the config.yml file. Only used if ``USE_DYNAMIC_IMAGE_TAG`` is enabled. Default is ``false``
+     - boolean
+     - Input
+   * - ADD_RANDOM_SUFFIX_TO_IMAGE_TAG (Optional)
+     - Appends a random four-character alphanumeric suffix to the image tag. Only used if ``USE_DYNAMIC_IMAGE_TAG`` is enabled. Default is ``false``
+     - boolean
+     - Input
+   * - RANDOM_SUFFIX_LENGTH (Optional)
+     - Specifies the number of random characters to append as a random suffix. Default is ``4``
+     - string
+     - Input
+   * - IMAGE_TAG_PREFIX (Optional)
+     - Prefix added to the dynamically generated image tag. Only used if ``USE_DYNAMIC_IMAGE_TAG`` is enabled. Default is ``empty``
+     - string
+     - Input
+   * - TIMESTAMP_FORMAT (Optional)
+     - Timestamp format used in the generated image tag. Follows Python’s ``strftime`` syntax. Only used if ``USE_DYNAMIC_IMAGE_TAG`` is enabled. Default is ``%Y%m%d-%H%M``
      - string
      - Input
 

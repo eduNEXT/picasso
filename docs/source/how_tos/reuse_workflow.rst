@@ -1,3 +1,5 @@
+.. _reuse-workflow:
+
 Reuse Picasso Workflow in Your Repository
 ##########################################
 
