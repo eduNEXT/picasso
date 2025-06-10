@@ -54,6 +54,7 @@ import secrets
 import string
 from datetime import datetime
 from get_tutor_config import load_config
+from service_tag_map import service_tag_map
 
 def str_to_bool(value):
     """
@@ -176,14 +177,12 @@ def main(config_file: str = "config.yml", service: str = None, image_tag_prefix:
         save_config (bool): If True, the image name will be saved directly to config.yml.
         image_tag (str): The image name to save (used only if save_config is True).
     """
-    target_key_map_path = f"{os.path.dirname(os.path.abspath(__file__))}/service_tag_map.yml"
     tutor_config = load_config(config_file)
-    target_key_map = load_config(target_key_map_path)
 
-    if service not in target_key_map:
+    if service not in service_tag_map:
         sys.exit(f"ERROR: Service {service} not found in service_tag_map.yml")
 
-    target_key = target_key_map[service]
+    target_key = service_tag_map[service]
 
     if target_key not in tutor_config:
         sys.exit(f"ERROR: key {target_key} not found in config.yml")
