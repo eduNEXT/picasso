@@ -48,6 +48,7 @@ You can further customize the tag by using additional input parameters:
 - ``IMAGE_TAG_PREFIX``: Allows you to define a custom string to appear before the timestamp.
 - ``TIMESTAMP_FORMAT``: Allows you to define the timestamp format. This must be a valid format supported by Python's ``strftime`` function.
 - ``ADD_RANDOM_SUFFIX_TO_IMAGE_TAG``: When set to ``true``, a random 4-character alphanumeric string will be appended to the tag.
+- ``RANDOM_SUFFIX_LENGTH``: Specifies the number of random characters to append as a random suffix
 
 Committing Updated Tags to the Repository
 -----------------------------------------
@@ -86,6 +87,7 @@ Example Configuration
           USE_DYNAMIC_IMAGE_TAG: true
           UPDATE_IMAGE_TAG_IN_REPO: true
           ADD_RANDOM_SUFFIX_TO_IMAGE_TAG: true
+          RANDOM_SUFFIX_LENGTH: "8"
           TIMESTAMP_FORMAT: "%Y%m%d"
           IMAGE_TAG_PREFIX: "picasso-"
           PICASSO_VERSION: dmh/create-image-tag

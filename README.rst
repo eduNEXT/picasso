@@ -113,6 +113,10 @@ Before using the workflow, ensure that you have set up the following configurati
      - Appends a random four-character alphanumeric suffix to the image tag. Only used if ``USE_DYNAMIC_IMAGE_TAG`` is enabled. Default is ``false``
      - boolean
      - Input
+   * - RANDOM_SUFFIX_LENGTH (Optional)
+     - Specifies the number of random characters to append as a random suffix. Default is ``4``
+     - string
+     - Input
    * - IMAGE_TAG_PREFIX (Optional)
      - Prefix added to the dynamically generated image tag. Only used if ``USE_DYNAMIC_IMAGE_TAG`` is enabled. Default is ``empty``
      - string
