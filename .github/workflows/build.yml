@@ -243,7 +243,7 @@ jobs:
         if: ${{ inputs.USE_DYNAMIC_IMAGE_TAG && inputs.UPDATE_IMAGE_TAG_IN_REPO }}
         working-directory: ${{ github.workspace }}/strains
         env:
-          CONFIG_FILE: build/config.yml
+          CONFIG_FILE: ${{ inputs.STRAIN_PATH }}/config.yml
           SERVICE: ${{ inputs.SERVICE }}
           SCRIPT_PATH: ../picasso/.github/workflows/scripts/dynamic_image_tag.py
         run: |
