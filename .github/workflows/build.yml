@@ -78,7 +78,7 @@ on:
         required: false
       SSH_PRIVATE_KEY:
         description: 'Service user SSH key for repository checkout'
-        required: true
+        required: false
       AWS_ACCESS_KEY_ID:
         description: 'AWS access key ID'
         required: false
@@ -174,11 +174,17 @@ jobs:
           tutor plugins enable picasso
 
       - name: Setup SSH agent for private repositories cloning
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        if: env.SSH_PRIVATE_KEY != ''
         uses: webfactory/ssh-agent@v0.9.0
         with:
             ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Add GitHub to known hosts
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        if: env.SSH_PRIVATE_KEY != ''
         run: |
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
