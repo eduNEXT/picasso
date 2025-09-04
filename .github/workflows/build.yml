@@ -182,9 +182,9 @@ jobs:
             ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Add GitHub to known hosts
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        if: env.SSH_PRIVATE_KEY != ''
+        #env:
+        #  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        #if: env.SSH_PRIVATE_KEY != ''
         run: |
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
