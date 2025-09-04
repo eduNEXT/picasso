@@ -176,7 +176,7 @@ jobs:
       - name: Setup SSH agent for private repositories cloning
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        if: env.SSH_PRIVATE_KEY != ''
+        if: env.SSH_PRIVATE_KEY
         uses: webfactory/ssh-agent@v0.9.0
         with:
             ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -184,7 +184,7 @@ jobs:
       - name: Add GitHub to known hosts
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        if: env.SSH_PRIVATE_KEY != ''
+        if: env.SSH_PRIVATE_KEY
         run: |
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
