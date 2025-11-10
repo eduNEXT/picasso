@@ -161,7 +161,7 @@ jobs:
 
       - name: Install Tutor and its dependencies from the version specified in the config.yml
         run: |
-          pip install git+https://github.com/overhangio/tutor.git@$TUTOR_VERSION
+          pip install git+https://github.com/edunext/tutor.git@ulmo
           tutor config save
 
       - name: Update image tag in config.yml locally
