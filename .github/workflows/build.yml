@@ -225,6 +225,7 @@ jobs:
           LOGS_FILE_PATH: /tmp/build_logs.out
         run: |
           tutor config save
+          docker system prune -a --volumes -f
           (tutor images build $SERVICE --no-cache 2>&1) | tee $LOGS_FILE_PATH
 
       - name: Scan build logs for potential errors in the image
