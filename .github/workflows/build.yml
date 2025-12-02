@@ -256,7 +256,7 @@ jobs:
           git config user.name "GitHub Actions" 
           git config user.email "actions@github.com"
           git stash
-          git pull origin main
+          git pull origin ${{ inputs.STRAIN_REPOSITORY_BRANCH }}
           python $SCRIPT_PATH \
             --config-file ../strains/"$CONFIG_FILE" \
             --service "$SERVICE" \
