@@ -116,6 +116,17 @@ jobs:
           ssh-key: ${{ inputs.STRAIN_REPOSITORY != github.repository && secrets.SSH_PRIVATE_KEY || '' }}
           path: strains
 
+      - name: Clean Up Disk Space
+        if: runner.os == 'Linux'
+        run: |
+          sudo rm -rf /usr/lib/jvm
+          sudo rm -rf /usr/local/.ghcup
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
