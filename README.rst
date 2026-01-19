@@ -110,7 +110,7 @@ Before using the workflow, ensure that you have set up the following configurati
      - boolean
      - Input
    * - CLEAN_UP_DISK_SPACE (Optional)
-     - If this field is set to ``true``, some non-essential pre-installed resources on the runner will be removed to free up disk space and avoid running out of resources during image builds. Default is ``true``.
+     - If this field is set to ``true``, some non-essential pre-installed resources on the runner will be removed to free up disk space and avoid running out of resources during image builds. Default is ``true``. Recommended when using GitHub’s default hosted runners or any runner with limited resources.
      - boolean
      - Input
    * - ADD_RANDOM_SUFFIX_TO_IMAGE_TAG (Optional)
