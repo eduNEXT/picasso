@@ -212,7 +212,9 @@ jobs:
         if: ${{ inputs.BUILDKIT_MAX_PARALLELISM }}
         run: |
           echo "[worker.oci]
-          max-parallelism = ${{ inputs.BUILDKIT_MAX_PARALLELISM }}" > buildkit.toml
+          max-parallelism = ${{ inputs.BUILDKIT_MAX_PARALLELISM }}
+          platforms = [\"linux/arm64\"]" > buildkit.toml
+
           docker buildx create --use --node=limitparallelsteps --driver=docker-container --config=./buildkit.toml
 
       - name: Configure AWS credentials
