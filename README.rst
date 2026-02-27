@@ -109,6 +109,10 @@ Before using the workflow, ensure that you have set up the following configurati
      - If this field is set to ``true``, a commit will be created with the updated image tag name in the config.yml file. Only used if ``USE_DYNAMIC_IMAGE_TAG`` is enabled. Default is ``false``
      - boolean
      - Input
+   * - CLEAN_UP_DISK_SPACE (Optional)
+     - If this field is set to ``true``, some non-essential pre-installed resources on the runner will be removed to free up disk space and avoid running out of resources during image builds. Default is ``true``. Recommended when using GitHub’s default hosted runners or any runner with limited resources.
+     - boolean
+     - Input
    * - ADD_RANDOM_SUFFIX_TO_IMAGE_TAG (Optional)
      - Appends a random four-character alphanumeric suffix to the image tag. Only used if ``USE_DYNAMIC_IMAGE_TAG`` is enabled. Default is ``false``
      - boolean
