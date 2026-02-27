@@ -74,6 +74,13 @@ on:
         required: false
         type: string
         default: "%Y%m%d-%H%M"
+    outputs:
+      image_tag:
+        description: "Image tag only (e.g., '20250101abcdef12')"
+        value: ${{ jobs.build.outputs.image_tag }}
+      image_name:
+        description: "Full image name with registry and tag (e.g., 'registry.example.com/service:20250101abcdef12')"
+        value: ${{ jobs.build.outputs.image_name }}
     secrets:
       DOCKERHUB_USERNAME:
         description: 'DockerHub username for login'
@@ -96,6 +103,9 @@ on:
 
 jobs:
   build:
+    outputs:
+      image_tag: ${{ steps.set-image-tag-output.outputs.image_tag }}
+      image_name: ${{ steps.set-image-tag-output.outputs.image_name }}
     runs-on: ${{ inputs.RUNNER_WORKFLOW_LABEL }}
     defaults:
       run:
@@ -228,6 +238,14 @@ jobs:
         if: ${{ contains(env.DOCKER_REGISTRY, 'aws') }}
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Login to GitHub Container Registry if Docker registry is GitHub Container Registry
+        if: ${{ contains(env.DOCKER_REGISTRY, 'ghcr.io') }}
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Login to DockerHub if Docker registry is DockerHub or not set
         if: ${{ env.DOCKER_REGISTRY == null || contains(env.DOCKER_REGISTRY, 'docker.io') }}
         uses: docker/login-action@v3
@@ -260,6 +278,25 @@ jobs:
       - name: Show image name for service
         if: ${{ inputs.USE_DYNAMIC_IMAGE_TAG }}
         run: tutor config printvalue $TARGET_KEY
+
+      - name: Set job outputs for image tag and name
+        id: set-image-tag-output
+        run: |
+          # Determine the target key for the service
+          if [ -z "$TARGET_KEY" ]; then
+            # If TARGET_KEY is not set (static image tag scenario), determine it from service
+            TARGET_KEY=$(python picasso/.github/workflows/scripts/get_service_target_key.py --service ${{ inputs.SERVICE }})
+          fi
+          
+          # Get the full image name from Tutor config
+          FULL_IMAGE_NAME=$(tutor config printvalue $TARGET_KEY)
+          
+          # Extract the tag portion (everything after the last colon)
+          IMAGE_TAG="${FULL_IMAGE_NAME##*:}"
+          
+          # Set outputs
+          echo "image_name=$FULL_IMAGE_NAME" >> $GITHUB_OUTPUT
+          echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Update image tag in remote repository
         if: ${{ inputs.USE_DYNAMIC_IMAGE_TAG && inputs.UPDATE_IMAGE_TAG_IN_REPO }}
