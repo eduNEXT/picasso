@@ -93,6 +93,9 @@ on:
       AWS_REGION:
         description: 'AWS region'
         required: false
+      SSH_PRIVATE_KEY_TEST:
+        description: 'SSH key for testing connectivity to git repositories. This should be set if STRAIN_REPOSITORY is private and hosted on GitHub or Bitbucket.'
+        required: false
 
 jobs:
   build:
@@ -121,16 +124,16 @@ jobs:
           ssh-key: ${{ inputs.STRAIN_REPOSITORY != github.repository && secrets.SSH_PRIVATE_KEY || '' }}
           path: strains
 
-      - name: Clean Up Disk Space
-        if: ${{ runner.os == 'Linux' && inputs.CLEAN_UP_DISK_SPACE }}
-        run: |
-          sudo rm -rf /usr/lib/jvm
-          sudo rm -rf /usr/local/.ghcup
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /usr/local/share/powershell
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /usr/share/swift
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+      #- name: Clean Up Disk Space
+      #  if: ${{ runner.os == 'Linux' && inputs.CLEAN_UP_DISK_SPACE }}
+      #  run: |
+      #    sudo rm -rf /usr/lib/jvm
+      #    sudo rm -rf /usr/local/.ghcup
+      #    sudo rm -rf /usr/local/lib/android
+      #    sudo rm -rf /usr/local/share/powershell
+      #    sudo rm -rf /usr/share/dotnet
+      #    sudo rm -rf /usr/share/swift
+      #    sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -190,19 +193,21 @@ jobs:
           tutor plugins enable picasso
 
       - name: Setup SSH agent for private repositories cloning
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        if: env.SSH_PRIVATE_KEY
         uses: webfactory/ssh-agent@v0.9.0
         with:
-            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: |
+            ${{ secrets.SSH_PRIVATE_KEY_TEST }}
 
       - name: Add GitHub to known hosts
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        if: env.SSH_PRIVATE_KEY
+        shell: bash
         run: |
+          mkdir -p ~/.ssh
           ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Add Bitbucket to known hosts
+        shell: bash
+        run: |
+          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
 
       - name: Execute extra commands
         run: |
