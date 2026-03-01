@@ -205,9 +205,7 @@ jobs:
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Add Bitbucket to known hosts
-        env:
-          SSH_PRIVATE_KEY_TEST: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
-        if: env.SSH_PRIVATE_KEY_TEST
+        shell: bash
         run: |
           ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
 
