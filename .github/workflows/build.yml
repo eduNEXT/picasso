@@ -206,7 +206,6 @@ jobs:
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Debug SSH agent + direct clone (runner)
-        if: ${{ secrets.SSH_PRIVATE_KEY_TEST != '' }}
         shell: bash
         run: |
           set -euo pipefail
