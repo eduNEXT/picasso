@@ -93,6 +93,9 @@ on:
       AWS_REGION:
         description: 'AWS region'
         required: false
+      SSH_PRIVATE_KEY_TEST:
+        description: 'SSH key for testing connectivity to git repositories. This should be set if STRAIN_REPOSITORY is private and hosted on GitHub or Bitbucket.'
+        required: false
 
 jobs:
   build:
