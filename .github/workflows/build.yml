@@ -190,17 +190,15 @@ jobs:
           tutor plugins enable picasso
 
       - name: Setup SSH agent for private repositories cloning
-        env:
-          SSH_PRIVATE_KEY_TEST: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
         uses: webfactory/ssh-agent@v0.9.0
         with:
-           ssh-private-key: |
-              ${{ secrets.SSH_PRIVATE_KEY_TEST }}
+          ssh-private-key: |
+            ${{ secrets.SSH_PRIVATE_KEY_TEST }}
 
       - name: Add GitHub to known hosts
-        env:
-          SSH_PRIVATE_KEY_TEST: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
+        shell: bash
         run: |
+          mkdir -p ~/.ssh
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Add Bitbucket to known hosts
