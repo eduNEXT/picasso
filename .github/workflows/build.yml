@@ -205,27 +205,6 @@ jobs:
         run: |
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Debug SSH agent + direct clone (runner)
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "== env =="
-          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK"
-          echo "== ssh-agent identities =="
-          ssh-add -l || true
-
-          echo "== github handshake (will not clone, just auth test) =="
-          # GitHub returns a "successfully authenticated" message and exits non-zero; that's normal.
-          ssh -o StrictHostKeyChecking=accept-new -T git@github.com || true
-
-          echo "== direct clone =="
-          rm -rf /tmp/eox-core-priv
-          GIT_SSH_COMMAND="ssh -vvv -o StrictHostKeyChecking=accept-new" \
-            git clone -b main git@github.com:magajh/eox-core-priv.git /tmp/eox-core-priv
-
-          echo "== cloned OK =="
-          ls -la /tmp/eox-core-priv | head
-
       - name: Add Bitbucket to known hosts
         env:
           SSH_PRIVATE_KEY_TEST: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
