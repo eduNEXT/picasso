@@ -81,8 +81,11 @@ on:
       DOCKERHUB_PASSWORD:
         description: 'DockerHub password for login'
         required: false
+      SSH_PRIVATE_KEYS:
+        description: 'One or more SSH private keys (multiline). Supports multiple deploy keys.'
+        required: false
       SSH_PRIVATE_KEY:
-        description: 'Service user SSH key for repository checkout'
+        description: 'DEPRECATED: single SSH key'
         required: false
       AWS_ACCESS_KEY_ID:
         description: 'AWS access key ID'
@@ -192,16 +195,21 @@ jobs:
       - name: Setup SSH agent for private repositories cloning
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        if: env.SSH_PRIVATE_KEY
+          SSH_PRIVATE_KEYS: ${{ secrets.SSH_PRIVATE_KEYS }}
+          HAS_SSH_KEYS: ${{ secrets.SSH_PRIVATE_KEY != '' || secrets.SSH_PRIVATE_KEYS != '' }}
+        if: env.HAS_SSH_KEYS == 'true'
         uses: webfactory/ssh-agent@v0.9.0
         with:
-            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: |
+            ${{ secrets.SSH_PRIVATE_KEY }}
+            ${{ secrets.SSH_PRIVATE_KEYS }}
 
       - name: Add GitHub to known hosts
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        if: env.SSH_PRIVATE_KEY
+          HAS_SSH_KEYS: ${{ secrets.SSH_PRIVATE_KEY != '' || secrets.SSH_PRIVATE_KEYS != '' }}
+        if: env.HAS_SSH_KEYS == 'true'
         run: |
+          mkdir -p ~/.ssh
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Execute extra commands

@@ -24,7 +24,7 @@ Key features of the Picasso Workflow include:
 - **Supports multiple services**: You can specify the service to build (e.g., ``openedx``, ``mfe``, ``codejail``, etc.) using the ``SERVICE`` input.
 - **Customizable repository and strain**: The workflow allows for specifying the repository, branch, and path to the strain being built. This enables building images from different configurations.
 - **Configurable BuildKit parallelism**: By default, the workflow limits parallelism during the build process to optimize resource usage, although this can be changed using the ``ENABLE_LIMIT_BUILDKIT_PARALLELISM`` input. This is useful for low-powered machines, like `Github Actions standard runners`_.
-- **Private repository access**: SSH keys are used to clone private repositories securely. The SSH private key should be stored as a secret in the repository, and must have access to the repository specified in ``STRAIN_REPOSITORY``.
+- **Private repository access**: SSH keys are used to clone private repositories securely. Picasso supports both a single SSH private key and multiple SSH private keys when accessing different private repositories.
 - **Extra commands**: The workflow allows running additional custom commands with ``tutor picasso run-extra-commands``. For details, refer to the `tutor-contrib-picasso`_ documentation.
 - **Environment setup**: The workflow sets up installs necessary plugins like ``tutor-contrib-picasso``, and prepares the environment to build and push Docker images using the `Tutor CLI`_.
 - **Dynamic tag generation**: If this workflow configuration is enabled, a dynamic tag will be generated to build the image for the specified service. Additionally, it is possible to create a commit in the repository where the config.yml used to build the service is located, updating it with the new image tag.
@@ -65,8 +65,12 @@ Before using the workflow, ensure that you have set up the following configurati
      - AWS region for pushing images to ECR.
      - string
      - Secret
-   * - SSH_PRIVATE_KEY (Required)
+   * - SSH_PRIVATE_KEY (Optional)
      - SSH private key for repository checkout. This key should have access to the repository specified in ``STRAIN_REPOSITORY``.
+     - string
+     - Secret
+   * - SSH_PRIVATE_KEYS (Optional)
+     - One or more SSH private keys (multiline). Use this when accessing multiple private repositories with different deploy keys.
      - string
      - Secret
    * - STRAIN_REPOSITORY (Required)
@@ -130,6 +134,39 @@ Before using the workflow, ensure that you have set up the following configurati
      - string
      - Input
 
+Private Repository Access (Multiple SSH Keys)
+*********************************************
+
+Picasso uses the `webfactory/ssh-agent`_ action to authenticate against private repositories.
+
+If you only need access to a single private repository, you can continue using ``SSH_PRIVATE_KEY``.
+
+If you need to access multiple private repositories (for example, when using multiple GitHub deploy keys), define ``SSH_PRIVATE_KEYS`` as a multiline secret containing all required private keys concatenated together:
+
+.. code-block:: text
+
+   -----BEGIN OPENSSH PRIVATE KEY-----
+   (key 1)
+   -----END OPENSSH PRIVATE KEY-----
+   -----BEGIN OPENSSH PRIVATE KEY-----
+   (key 2)
+   -----END OPENSSH PRIVATE KEY-----
+
+When using GitHub deploy keys (which are scoped to a single repository), it is strongly recommended to include the repository SSH URL in the key comment when generating the key:
+
+.. code-block:: bash
+
+   ssh-keygen -t ed25519 -C "git@github.com:owner/repository.git"
+
+This allows ``webfactory/ssh-agent`` to correctly associate keys with their respective repositories and avoid authentication failures when multiple keys are loaded.
+
+For more details, see:
+
+- `webfactory/ssh-agent documentation`_
+
+.. _webfactory/ssh-agent: https://github.com/webfactory/ssh-agent
+.. _webfactory/ssh-agent documentation: https://github.com/webfactory/ssh-agent#support-for-github-deploy-keys
+
 Usage
 *****
 
@@ -152,6 +189,15 @@ To use the Picasso Workflow, follow these steps:
             DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
             DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
             SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+   If multiple SSH keys are required:
+
+   .. code-block:: yaml
+
+      secrets:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        SSH_PRIVATE_KEYS: ${{ secrets.SSH_PRIVATE_KEYS }}
 
 2. Modify the ``STRAIN_REPOSITORY``, ``STRAIN_REPOSITORY_BRANCH``, ``STRAIN_PATH``, and ``SERVICE`` inputs to match your project requirements.
 
@@ -204,3 +250,4 @@ Please do not report security vulnerabilities in public forums. Instead, email t
     :alt: License
 
 .. |status-badge| image:: http://badges.github.io/stability-badges/dist/Status-Maintained-brightgreen.svg
+  
