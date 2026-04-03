@@ -212,6 +212,13 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
+      - name: Add Bitbucket to known hosts
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        if: env.SSH_PRIVATE_KEY
+        run: |
+          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
+
       - name: Execute extra commands
         run: |
           tutor picasso run-extra-commands
