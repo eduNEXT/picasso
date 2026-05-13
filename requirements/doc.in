@@ -1,15 +1,9 @@
 sphinx
 sphinx-book-theme
-recommonmark
+myst-parser
 sphinxcontrib.images
-sphinx_panels
+sphinx-design
 sphinxcontrib.contentui
 sphinx_copybutton
 sphinxcontrib.mermaid
-sphinxcontrib-applehelp
-sphinxcontrib-devhelp
-sphinxcontrib-htmlhelp
-sphinxcontrib-qthelp
-sphinxcontrib-serializinghtml
-sphinxcontrib-jsmath
 sphinxcontrib-youtube
