@@ -4,6 +4,7 @@ Mapping of service identifiers to their corresponding Docker image environment v
 Keys:
     - "openedx": Open edX platform container
     - "mfe": Micro-frontend container
+    - "notes": Open edX note-taking app
     - "aspects-superset": Superset-based reporting container
 
 Values:
@@ -12,5 +13,6 @@ Values:
 service_tag_map = {
   "openedx": "DOCKER_IMAGE_OPENEDX",
   "mfe": "MFE_DOCKER_IMAGE",
+  "notes": "NOTES_DOCKER_IMAGE",
   "aspects-superset": "DOCKER_IMAGE_SUPERSET"
 }
