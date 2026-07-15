@@ -1,0 +1,170 @@
+# Picasso reusable pipeline for Azure DevOps.
+#
+# Builds an Open edX Docker image with Tutor and pushes it to Azure
+# Container Registry (ACR) using admin username/password credentials.
+#
+# This mirrors the GitHub Actions workflow (`.github/workflows/build.yml`):
+# same parameter names, same step order, and it reuses the exact same
+# Python utility scripts (`.github/workflows/scripts/*.py`).
+#
+# Usage (from the caller's azure-pipelines.yml):
+#
+#   resources:
+#     repositories:
+#       - repository: picasso
+#         type: github
+#         name: eduNEXT/picasso
+#         ref: refs/heads/main
+#
+#   extends:
+#     template: azure-pipelines/build-acr.yml@picasso
+#     parameters:
+#       STRAIN_REPOSITORY: 'git@ssh.dev.azure.com:v3/MyOrg/MyProject/build-manifests'
+#       STRAIN_REPOSITORY_BRANCH: 'main'
+#       STRAIN_PATH: 'redwood/base'
+#       SERVICE: 'openedx'
+#       ACR_LOGIN_SERVER: 'myregistry.azurecr.io'
+#       ACR_USERNAME: $(ACR_USERNAME)
+#       ACR_PASSWORD: $(ACR_PASSWORD)
+#       SSH_PRIVATE_KEY: $(SSH_PRIVATE_KEY)
+#
+# ACR_USERNAME, ACR_PASSWORD and SSH_PRIVATE_KEY must be secret pipeline
+# variables in the CALLER pipeline, passed through as literal `$(VarName)`
+# macro references as shown above, so they're only resolved at runtime via
+# the `env:` mapping below and never baked into the compiled YAML.
+#
+# The `picasso` repository resource alias is required: this template checks
+# out that repository to reuse the Python utility scripts, just like the
+# GitHub Actions workflow does with `actions/checkout`.
+parameters:
+  - name: STRAIN_REPOSITORY
+    type: string
+  - name: STRAIN_REPOSITORY_BRANCH
+    type: string
+  - name: STRAIN_PATH
+    type: string
+  - name: SERVICE
+    type: string
+  - name: ACR_LOGIN_SERVER
+    type: string
+  - name: ACR_USERNAME
+    type: string
+  - name: ACR_PASSWORD
+    type: string
+  - name: SSH_PRIVATE_KEY
+    type: string
+    default: ''
+  - name: POOL_VM_IMAGE
+    type: string
+    default: 'ubuntu-latest'
+  - name: PYTHON_VERSION
+    type: string
+    default: '3.12'
+  - name: TUTOR_CONTRIB_PICASSO_VERSION
+    type: string
+    default: 'v0.2.0'
+
+jobs:
+  - job: BuildAndPushToACR
+    displayName: 'Build and push image to ACR'
+    pool:
+      vmImage: ${{ parameters.POOL_VM_IMAGE }}
+    steps:
+      - checkout: none
+
+      - checkout: picasso
+        path: picasso
+        displayName: 'Checkout Picasso repository for utility scripts'
+
+      - ${{ if ne(parameters.SSH_PRIVATE_KEY, '') }}:
+          - bash: |
+              set -euo pipefail
+              mkdir -p ~/.ssh
+              chmod 700 ~/.ssh
+              ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+              ssh-keyscan ssh.dev.azure.com >> ~/.ssh/known_hosts 2>/dev/null
+
+              eval "$(ssh-agent -s)"
+              echo "##vso[task.setvariable variable=SSH_AUTH_SOCK]$SSH_AUTH_SOCK"
+              echo "##vso[task.setvariable variable=SSH_AGENT_PID]$SSH_AGENT_PID"
+              echo "$SSH_PRIVATE_KEY" | ssh-add -
+            env:
+              SSH_PRIVATE_KEY: ${{ parameters.SSH_PRIVATE_KEY }}
+            displayName: 'Setup SSH agent for private repository cloning'
+
+      - bash: |
+          set -euo pipefail
+          mkdir -p "$(Pipeline.Workspace)/strains"
+          git clone --branch "${{ parameters.STRAIN_REPOSITORY_BRANCH }}" --depth 1 \
+            "${{ parameters.STRAIN_REPOSITORY }}" "$(Pipeline.Workspace)/strains"
+        displayName: 'Checkout strains repository for build configurations'
+
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: ${{ parameters.PYTHON_VERSION }}
+        displayName: 'Setup Python'
+
+      - bash: |
+          set -euo pipefail
+          pip install -r "$(Pipeline.Workspace)/picasso/requirements/base.txt"
+        displayName: 'Install necessary requirements for workflow scripts'
+
+      - bash: |
+          set -euo pipefail
+          ENV_VARS=$(python "$(Pipeline.Workspace)/picasso/.github/workflows/scripts/get_tutor_config.py" \
+            --config-file "$(Pipeline.Workspace)/strains/${{ parameters.STRAIN_PATH }}/config.yml" \
+            --required-keys TUTOR_VERSION \
+            --optional-keys DOCKER_REGISTRY)
+          while IFS='=' read -r key value; do
+            [ -z "$key" ] && continue
+            echo "##vso[task.setvariable variable=$key]$value"
+          done <<< "$ENV_VARS"
+        displayName: 'Get Tutor Configurations from config.yml and set them as pipeline variables'
+
+      - bash: |
+          set -euo pipefail
+          export TUTOR_ROOT="$(Pipeline.Workspace)/strains/${{ parameters.STRAIN_PATH }}"
+          export TUTOR_PLUGINS_ROOT="$TUTOR_ROOT/plugins"
+          echo "##vso[task.setvariable variable=TUTOR_ROOT]$TUTOR_ROOT"
+          echo "##vso[task.setvariable variable=TUTOR_PLUGINS_ROOT]$TUTOR_PLUGINS_ROOT"
+          pip install "git+https://github.com/overhangio/tutor.git@$TUTOR_VERSION"
+          tutor config save
+        displayName: 'Install Tutor and its dependencies from the version specified in config.yml'
+
+      - bash: |
+          set -euo pipefail
+          pip install "git+https://github.com/eduNEXT/tutor-contrib-picasso@${{ parameters.TUTOR_CONTRIB_PICASSO_VERSION }}"
+          tutor plugins enable picasso
+        displayName: 'Enable and install picasso plugin in Tutor environment'
+
+      - bash: |
+          set -euo pipefail
+          tutor picasso run-extra-commands
+        displayName: 'Execute extra commands'
+
+      - bash: |
+          set -euo pipefail
+          echo "$ACR_PASSWORD" | docker login "${{ parameters.ACR_LOGIN_SERVER }}" \
+            --username "$ACR_USERNAME" --password-stdin
+        env:
+          ACR_USERNAME: ${{ parameters.ACR_USERNAME }}
+          ACR_PASSWORD: ${{ parameters.ACR_PASSWORD }}
+        displayName: 'Login to Azure Container Registry'
+
+      - bash: |
+          set -euo pipefail
+          tutor config save
+          (tutor images build "${{ parameters.SERVICE }}" --no-cache 2>&1) | tee /tmp/build_logs.out
+        workingDirectory: '$(Pipeline.Workspace)/strains/${{ parameters.STRAIN_PATH }}'
+        displayName: 'Build service image with no cache'
+
+      - bash: |
+          set -euo pipefail
+          python "$(Pipeline.Workspace)/picasso/.github/workflows/scripts/identify_silent_errors.py" /tmp/build_logs.out
+        displayName: 'Scan build logs for potential errors in the image'
+
+      - bash: |
+          set -euo pipefail
+          tutor images push "${{ parameters.SERVICE }}"
+        workingDirectory: '$(Pipeline.Workspace)/strains/${{ parameters.STRAIN_PATH }}'
+        displayName: 'Push service image to ACR'
