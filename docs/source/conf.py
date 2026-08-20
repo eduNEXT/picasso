@@ -60,16 +60,15 @@ html_theme_options = {
     "repository_branch": "main",
     "path_to_docs": "source",
     "use_edit_page_button": True,
-    "logo_only": False,
-    "extra_navbar": extra_navbar_content,
+    "use_repository_button": True,
+    "use_issues_button": True,
     "home_page_in_toc": True,
     "show_navbar_depth": 1,
-    "use_repository_button": True,
-    "use_issues_button": True
 }
 
-html_sidebars = {'**': ["sidebar-logo.html", "search-field.html", "sbt-sidebar-nav.html"]}
-
+html_sidebars = {
+    "**": ["navbar-logo.html", "search-field.html", "sbt-sidebar-nav.html"]
+}
 # For custom styles
 images_config = {
     "default_image_width": "100%",
