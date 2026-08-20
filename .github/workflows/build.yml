@@ -74,6 +74,16 @@ on:
         required: false
         type: string
         default: "%Y%m%d-%H%M"
+      GIT_COMMIT_USER_NAME:
+        description: "The name of the user used to do commit changes."
+        required: false
+        type: string
+        default: "GitHub Actions"
+      GIT_COMMIT_USER_EMAIL:
+        description: "The email address of the user used to do commit changes."
+        required: false
+        type: string
+        default: "actions@github.com"
     secrets:
       DOCKERHUB_USERNAME:
         description: 'DockerHub username for login'
@@ -285,8 +295,8 @@ jobs:
           SERVICE: ${{ inputs.SERVICE }}
           SCRIPT_PATH: ../picasso/.github/workflows/scripts/dynamic_image_tag.py
         run: |
-          git config user.name "GitHub Actions" 
-          git config user.email "actions@github.com"
+          git config user.name "${{ inputs.GIT_COMMIT_USER_NAME }}"
+          git config user.email "${{ inputs.GIT_COMMIT_USER_EMAIL }}"
           git stash
           git pull origin ${{ inputs.STRAIN_REPOSITORY_BRANCH }}
           python $SCRIPT_PATH \
