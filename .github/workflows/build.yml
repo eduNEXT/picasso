@@ -34,6 +34,11 @@ on:
         required: false
         type: string
         default: '3.12'
+      PICASSO_ORGANIZATION:
+        description: 'The GitHub organization where Picasso is located.'
+        required: false
+        type: string
+        default: 'edunext'
       PICASSO_VERSION:
         description: 'Picasso version to use for the workflow scripts and utility functions. This should be a valid branch, tag or commit and it should match the version of the workflow used.'
         required: false
@@ -112,7 +117,7 @@ jobs:
       - name: Checkout Picasso repository for utility scripts
         uses: actions/checkout@v4
         with:
-          repository: edunext/picasso
+          repository: ${{ inputs.PICASSO_ORGANIZATION }}/picasso
           ref: ${{ inputs.PICASSO_VERSION }}
           path: picasso
 
