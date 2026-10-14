@@ -150,6 +150,14 @@ Before using the workflow, ensure that you have set up the following configurati
      - Timestamp format used in the generated image tag. Follows Python’s ``strftime`` syntax. Only used if ``USE_DYNAMIC_IMAGE_TAG`` is enabled. Default is ``%Y%m%d-%H%M``
      - string
      - Input
+   * - GIT_COMMIT_USER_NAME (Optional):
+     - The name of the user used to do commit changes. Default is `GitHub Actions`
+     - string
+     - Input
+   * - GIT_COMMIT_USER_EMAIL (Optional):
+     - The email address of the user used to do commit changes. Default is `actions@github.com`
+     - string
+     - Input
 
 Private Repository Access (Multiple SSH Keys)
 *********************************************
@@ -267,4 +275,3 @@ Please do not report security vulnerabilities in public forums. Instead, email t
     :alt: License
 
 .. |status-badge| image:: http://badges.github.io/stability-badges/dist/Status-Maintained-brightgreen.svg
-  
