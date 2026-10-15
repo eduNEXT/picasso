@@ -161,8 +161,8 @@ def parse_args():
     return parser.parse_args()
 
 
-def main(config_file: str = "config.yml", service: str = None, image_tag_prefix: str = "", 
-         timestamp_format: str = "%Y%m%d-%H%M", add_random_suffix_to_image_tag: bool = False, 
+def main(config_file: str = "config.yml", service: str = "openedx", image_tag_prefix: str = "",
+         timestamp_format: str = "%Y%m%d-%H%M", add_random_suffix_to_image_tag: bool = False,
          random_suffix_length: int = 4, save_config: bool = False, image_tag: str = None) -> None:
     """
     Load configuration, generate a dynamic image tag, and print or update config.
@@ -178,11 +178,10 @@ def main(config_file: str = "config.yml", service: str = None, image_tag_prefix:
         image_tag (str): The image name to save (used only if save_config is True).
     """
     tutor_config = load_config(config_file)
+    target_key = service_tag_map.get(service, f"{service.upper().replace('-','_')}_DOCKER_IMAGE")
 
-    if service not in service_tag_map:
-        sys.exit(f"ERROR: Service {service} not found in service_tag_map.yml")
-
-    target_key = service_tag_map[service]
+    if target_key not in tutor_config:
+        target_key = f"DOCKER_IMAGE_{service.upper().replace('-','_')}"
 
     if target_key not in tutor_config:
         sys.exit(f"ERROR: key {target_key} not found in config.yml")
